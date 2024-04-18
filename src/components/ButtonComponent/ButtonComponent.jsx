@@ -1,7 +1,18 @@
 import { Button } from 'antd';
+import React from 'react';
 
-const ButtonComponent = ({ size, placeholder, bordered, icon, ...rests }) => {
-    return <Button size={size} placeholder={placeholder} bordered={bordered} icon={icon} {...rests} />;
+const ButtonComponent = ({ size, styleButton, styleText, text, disabled, ...rests }) => {
+    return (
+        <Button
+            style={{
+                ...styleButton,
+            }}
+            size={size}
+            {...rests}
+        >
+            <span style={styleText}>{text}</span>
+        </Button>
+    );
 };
 
 export default ButtonComponent;

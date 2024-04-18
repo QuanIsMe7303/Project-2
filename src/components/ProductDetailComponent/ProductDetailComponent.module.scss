@@ -1,0 +1,56 @@
+.wrapper {
+    display: flex;
+    gap: 30px;
+    padding: 16px;
+    background-color: #fff;
+}
+
+.wrapper-left {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 16px;
+}
+
+.small-image {
+    display: grid;
+    place-items: center;
+}
+
+.rating-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.star-icon {
+    color: #ffde59;
+}
+
+.price {
+    font-size: 3rem;
+    font-weight: 500;
+    margin-top: 20px;
+}
+
+.quantity {
+    display: flex;
+    align-items: center;
+    gap: 16px;
+}
+
+.quantity-label {
+    font-size: 1.4rem;
+}
+
+.quantity-action {
+    display: flex;
+    align-items: center;
+}
+
+.buy-button {
+    margin-top: 70px;
+    &:hover {
+        opacity: 0.75;
+    }
+}
