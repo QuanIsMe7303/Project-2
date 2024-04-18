@@ -1,0 +1,45 @@
+.card-name {
+    // text-align: center;
+    font-size: 1.4rem;
+    font-weight: 600;
+}
+
+.card-rating_sold {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+.rating {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
+.star-icon {
+    color: #ffde59;
+}
+
+.number-sold {
+    padding: 0 8px;
+    border-left: 1px solid #ccc;
+}
+
+.card-price {
+    display: flex;
+    align-items: baseline;
+    gap: 8px;
+    margin-top: 8px;
+    color: rgb(255, 68, 76);
+}
+
+.price {
+    font-weight: 600;
+    font-size: 1.6rem;
+}
+
+.discount {
+    font-weight: 400;
+    font-size: 1.3rem;
+    color: rgb(39, 39, 42);
+    background: rgb(245, 245, 250);
+    padding: 2px 4px;
+}

@@ -1,0 +1,54 @@
+.wrapper {
+    width: 100%;
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 120px;
+    gap: 12px;
+    flex-wrap: nowrap;
+    background-color: rgb(26, 148, 255);
+}
+.logo {
+    font-size: 2rem;
+    color: #fff;
+    font-weight: bold;
+    text-align: left;
+}
+
+.header-right {
+    display: flex;
+    align-items: center;
+    color: #fff;
+    gap: 30px;
+
+}
+
+.search-input {
+    padding: 8px;
+}
+
+.account-wrapper,
+.cart-wrapper {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-size: 1.1rem;
+}
+
+.text-wrapper {
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    gap: 4px;
+}
+
+.user-icon,
+.cart-icon {
+    font-size: 30px;
+}
+
+.account {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+}
