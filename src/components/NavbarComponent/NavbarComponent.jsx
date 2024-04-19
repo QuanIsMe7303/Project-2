@@ -44,18 +44,10 @@ const NavbarComponent = () => {
     };
 
     return (
-        <div>
+        <div className={cx('wrapper')}>
             <h4 className={cx('label')}>Danh mục sản phẩm</h4>
             <div className={cx('content')}>
                 {renderComponent('list', ['Iphone', 'Ipad', 'Apple Watch'])}
-                {renderComponent('checkbox', [
-                    { value: 'a', label: 'A' },
-                    { value: 'b', label: 'B' },
-                    { value: 'c', label: 'C' },
-                ])}
-
-                {renderComponent('rating', [5, 4, 3])}
-                {renderComponent('price', ['Dưới 500.000đ', 'Từ 500.000đ đến 1.000.000đ', 'Từ 1.000.000đ trở lên'])}
             </div>
         </div>
     );

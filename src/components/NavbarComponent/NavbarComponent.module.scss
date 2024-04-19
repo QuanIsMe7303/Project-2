@@ -1,3 +1,11 @@
+.wrapper {
+    display: flex;
+    flex-direction: column;
+    padding-right: 40px;
+    background-color: #fafafa;
+    border-right: 1px solid #ccc;
+}
+
 .label {
     color: rgb(56, 56, 61);
     font-size: 1.4rem;
