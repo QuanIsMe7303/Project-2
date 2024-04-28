@@ -35,11 +35,19 @@
     font-size: 1.1rem;
 }
 
+.user-name {
+    cursor: pointer;
+}
+
 .text-wrapper {
     display: flex;
     flex-direction: column;
     justify-content: center;
     gap: 4px;
+
+    span {
+        cursor: pointer;
+    }
 }
 
 .user-icon,

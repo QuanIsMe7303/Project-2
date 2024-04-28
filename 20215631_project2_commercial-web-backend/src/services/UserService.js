@@ -12,8 +12,8 @@ const createUser = (newUser) => {
       });
       if (checkUser !== null) {
         resolve({
-          status: "OK",
-          message: "Email is already exist",
+          status: "ERR",
+          message: "Địa chỉ email đã tồn tại",
         });
       }
       const hashPassword = bcrypt.hashSync(password, 10);
@@ -47,8 +47,8 @@ const loginUser = (userLogin) => {
       // Kiểm tra tài khoản người dùng có trong database chưa
       if (checkUser === null) {
         resolve({
-          status: "OK",
-          message: "User is not exist",
+          status: "ERR",
+          message: "Tài khoản không tồn tại",
         });
       }
 
@@ -56,8 +56,8 @@ const loginUser = (userLogin) => {
 
       if (!comparePassword) {
         resolve({
-          status: "OK",
-          message: "Password or username is incorrect",
+          status: "ERR",
+          message: "Mật khẩu không đúng",
         });
       }
       const access_token = await generalAccessToken({

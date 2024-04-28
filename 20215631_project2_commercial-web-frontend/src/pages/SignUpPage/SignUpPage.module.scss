@@ -18,7 +18,7 @@ p {
 }
 
 .form {
-    margin: 30px 0 40px;
+    margin: 30px 0 30px;
     display: flex;
     flex-direction: column;
     gap: 16px;
@@ -31,6 +31,20 @@ p {
     display: flex;
     flex-direction: column;
     gap: 4px;
+    position: relative;
+}
+.input {
+    height: 42px;
+}
+
+.show-password,
+.show-confirm-password {
+    position: absolute;
+    bottom: 10px;
+    right: 12px;
+    opacity: 0.7;
+    cursor: pointer;
+    z-index: 10;
 }
 
 .bottom {
@@ -42,13 +56,20 @@ p {
     font-size: 1.2rem;
 }
 
-
 .make-account {
     display: flex;
     align-items: center;
     gap: 8px;
+}
 
-    a {
-        color: rgb(13, 92, 182);
-    }
+.move-to-signin {
+    color: rgb(13, 92, 182);
+    cursor: pointer;
+    text-decoration: underline;
+}
+
+.err-sign-up-mes {
+    color: red;
+    margin-top: 8px;
+    font-size: 1.1rem;
 }

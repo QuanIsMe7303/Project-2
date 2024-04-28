@@ -14,8 +14,7 @@ const authMiddleware = (req, res, next) => {
         status: "ERROR",
       });
     }
-    const { payload } = user;
-    if (payload?.isAdmin) {
+    if (user?.isAdmin) {
       next();
     } else {
       return res.status(404).json({
@@ -27,6 +26,7 @@ const authMiddleware = (req, res, next) => {
 };
 
 const authUserMiddleware = (req, res, next) => {
+  console.log("req.headers", req.headers);
   const token = req.headers.token?.split(" ")[1];
   const userId = req.params.id;
   jwt.verify(token, process.env.ACCESS_TOKEN, function (err, user) {
@@ -37,8 +37,7 @@ const authUserMiddleware = (req, res, next) => {
         status: "ERROR",
       });
     }
-    const { payload } = user;
-    if (payload?.isAdmin || payload?.id === userId) {
+    if (user?.isAdmin || user?.id === userId) {
       next();
     } else {
       return res.status(404).json({
@@ -51,5 +50,5 @@ const authUserMiddleware = (req, res, next) => {
 
 module.exports = {
   authMiddleware,
-  authUserMiddleware
+  authUserMiddleware,
 };

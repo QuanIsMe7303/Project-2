@@ -2,48 +2,127 @@ import classNames from 'classnames/bind';
 import styles from './SignInPage.module.scss';
 import InputForm from '../../components/InputForm/InputForm';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
-import { Link } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
+import * as UserService from '../../services/UserService';
+import { useMutationHook } from '../../hooks/useMutationHook';
+import Loading from '../../components/LoadingComponent/Loading';
+import { jwtDecode } from 'jwt-decode';
+import { useDispatch } from 'react-redux';
+import { updateUser } from '../../redux/slices/userSlice';
 
 const cx = classNames.bind(styles);
 
 const SignInPage = () => {
+    const [isShowPassword, setIsShowPassword] = useState(false);
+    const [email, setEmail] = useState('');
+    const [password, setPassword] = useState('');
+    const dispatch = useDispatch();
+
+    const navigate = useNavigate();
+
+    const mutation = useMutationHook((data) => UserService.loginUser(data));
+
+    const { data, isPending, isSuccess } = mutation;
+
+    useEffect(() => {
+        if (isSuccess) {
+            navigate('/');
+            localStorage.setItem('access_token', data?.access_token);
+            if (data?.access_token) {
+                const decoded = jwtDecode(data?.access_token);
+                console.log(decoded);
+                if (decoded?.id) {
+                    handleGetDetailUser(decoded?.id, data?.access_token);
+                }
+            }
+        }
+    }, [isSuccess]);
+
+    const handleGetDetailUser = async (id, token) => {
+        const res = await UserService.getDetailUser(id, token);
+        dispatch(updateUser({ ...res?.data, access_token: token }));
+    };
+
+    const handleNavigateSignUp = () => {
+        navigate('/sign-up');
+    };
+
+    const handleOnChangeEmail = (e) => {
+        setEmail(e.target.value);
+    };
+
+    const handleOnChangePassword = (e) => {
+        setPassword(e.target.value);
+    };
+
+    const handleSignIn = () => {
+        mutation.mutate({
+            email,
+            password,
+        });
+        console.log(email, password);
+    };
+
     return (
         <div className={cx('wrapper')}>
             <div className={cx('container')}>
                 <h1>Xin chào</h1>
                 <p>Đăng nhập vào hệ thống</p>
-                <div className={cx('form')}>
+                <form className={cx('form')}>
                     <div className={cx('form-email')}>
                         <p>Địa chỉ email: </p>
-                        <InputForm type="text" placeholder="Nhập địa chỉ email..." />
+                        <InputForm
+                            className={cx('input')}
+                            type="text"
+                            placeholder="Nhập địa chỉ email..."
+                            value={email}
+                            onChange={handleOnChangeEmail}
+                        />
                     </div>
                     <div className={cx('form-password')}>
                         <p>Mật khẩu:</p>
-                        <InputForm type="password" placeholder="******" />
+                        <InputForm
+                            className={cx('input')}
+                            type={isShowPassword ? 'text' : 'password'}
+                            placeholder="******"
+                            value={password}
+                            onChange={handleOnChangePassword}
+                        />
+                        <div className={cx('show-password')} onClick={() => setIsShowPassword(!isShowPassword)}>
+                            {isShowPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
+                        </div>
                     </div>
-                </div>
-    
-                <ButtonComponent
-                    styleButton={{
-                        backgroundColor: 'red',
-                        width: '100%',
-                        height: '48px',
-                        border: 'none',
-                        borderRadius: '4px',
-                        color: '#fff',
-                    }}
-                    text="Đăng nhập"
-                    styleText={{
-                        fontSize: '1.3rem',
-                        fontWeight: '600',
-                    }}
-                />
-    
+                    {data?.status === 'ERR' && <span className={cx('err-sign-in-mes')}>{data?.message}</span>}
+                </form>
+                <Loading isLoading={isPending}>
+                    <ButtonComponent
+                        disabled={!email.length || !password.length}
+                        styleButton={{
+                            backgroundColor: 'red',
+                            width: '100%',
+                            height: '48px',
+                            border: 'none',
+                            borderRadius: '4px',
+                            color: '#fff',
+                        }}
+                        text="Đăng nhập"
+                        styleText={{
+                            fontSize: '1.3rem',
+                            fontWeight: '600',
+                        }}
+                        onClick={handleSignIn}
+                    />
+                </Loading>
+
                 <div className={cx('bottom')}>
                     <p className={cx('forget-password')}>Quên mật khẩu</p>
                     <div className={cx('make-account')}>
                         <p>Chưa có tài khoản?</p>
-                        <Link to="/sign-up">Tạo tài khoản</Link>
+                        <span className={cx('move-to-signup')} onClick={handleNavigateSignUp}>
+                            Tạo tài khoản
+                        </span>
                     </div>
                 </div>
             </div>
