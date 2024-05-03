@@ -7,7 +7,7 @@ import { useNavigate } from 'react-router-dom';
 import { useDispatch, useSelector } from 'react-redux';
 import * as UserService from '../../services/UserService';
 import { resetUser } from '../../redux/slices/userSlice';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import Loading from '../LoadingComponent/Loading';
 
 const cx = className.bind(styles);
@@ -16,6 +16,8 @@ const HeaderComponent = () => {
     const navigate = useNavigate();
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
+    const [userName, setUserName] = useState('');
+    const [userAvatar, setUserAvatar] = useState('');
     const [loading, setLoading] = useState(false);
 
     const handleNavigateLogin = () => {
@@ -29,9 +31,18 @@ const HeaderComponent = () => {
         setLoading(false);
     };
 
+    useEffect(() => {
+        setLoading(true);
+        setUserName(user?.name);
+        setUserAvatar(user?.avatar);
+        setLoading(false);
+    }, [user?.name, user?.avatar]);
+
     const userMenu = (
         <div className={cx('user-menu')}>
-            <p className={cx('user-menu-item')}>Thông tin người dùng</p>
+            <p className={cx('user-menu-item')} onClick={() => navigate('/profile-user')}>
+                Thông tin người dùng
+            </p>
             <p className={cx('user-menu-item')} onClick={handleLogout}>
                 Đăng xuất
             </p>
@@ -50,10 +61,14 @@ const HeaderComponent = () => {
                 <Col span={6} className={cx('header-right')}>
                     <Loading isLoading={loading}>
                         <div className={cx('account-wrapper')}>
-                            <UserOutlined className={cx('user-icon')} />
-                            {user?.name ? (
+                            {userAvatar ? (
+                                <img className={cx('header-avatar')} src={userAvatar} alt="avatar" />
+                            ) : (
+                                <UserOutlined className={cx('user-icon')} />
+                            )}
+                            {user?.access_token ? (
                                 <Popover content={userMenu} trigger="click">
-                                    <span className={cx('user-name')}>{user.name}</span>
+                                    <span className={cx('user-name')}>{userName?.length ? userName : user?.email}</span>
                                 </Popover>
                             ) : (
                                 <div className={cx('text-wrapper')} onClick={handleNavigateLogin}>
