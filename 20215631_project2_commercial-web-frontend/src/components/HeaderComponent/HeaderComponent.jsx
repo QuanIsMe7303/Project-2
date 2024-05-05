@@ -12,7 +12,7 @@ import Loading from '../LoadingComponent/Loading';
 
 const cx = className.bind(styles);
 
-const HeaderComponent = () => {
+const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
     const navigate = useNavigate();
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
@@ -43,6 +43,11 @@ const HeaderComponent = () => {
             <p className={cx('user-menu-item')} onClick={() => navigate('/profile-user')}>
                 Thông tin người dùng
             </p>
+            {user?.isAdmin && (
+                <p className={cx('user-menu-item')} onClick={() => navigate('/system/admin')}>
+                    Quản lý hệ thống
+                </p>
+            )}
             <p className={cx('user-menu-item')} onClick={handleLogout}>
                 Đăng xuất
             </p>
@@ -52,12 +57,14 @@ const HeaderComponent = () => {
     return (
         <div>
             <Row className={cx('wrapper')}>
-                <Col className={cx('logo')} span={3}>
+                <Col className={cx('logo')} span={3} >
                     LOGO
                 </Col>
-                <Col span={12}>
-                    <ButtonInputSearch size="large" placeholder="Tìm kiếm sản phẩm..." textButton="Tìm kiếm" />
-                </Col>
+                {!isHiddenSearch && (
+                    <Col span={12}>
+                        <ButtonInputSearch size="large" placeholder="Tìm kiếm sản phẩm..." textButton="Tìm kiếm" />
+                    </Col>
+                )}
                 <Col span={6} className={cx('header-right')}>
                     <Loading isLoading={loading}>
                         <div className={cx('account-wrapper')}>
@@ -78,10 +85,12 @@ const HeaderComponent = () => {
                         </div>
                     </Loading>
 
-                    <div className={cx('cart-wrapper')}>
-                        <ShoppingCartOutlined className={cx('cart-icon')} />
-                        <span>Giỏ hàng</span>
-                    </div>
+                    {!isHiddenCart && (
+                        <div className={cx('cart-wrapper')}>
+                            <ShoppingCartOutlined className={cx('cart-icon')} />
+                            <span>Giỏ hàng</span>
+                        </div>
+                    )}
                 </Col>
             </Row>
         </div>

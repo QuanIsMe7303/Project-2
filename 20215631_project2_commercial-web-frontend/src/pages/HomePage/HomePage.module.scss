@@ -18,9 +18,10 @@
 }
 
 .product-cart-wrapper {
-    display: flex;
+    display: grid;
+    grid-template-columns: 20% 20% 20% 20% 20%;
     align-items: center;
-    justify-content: space-between;
+    // justify-content: space-between;
     margin-top: 40px;
     width: 100%;
 }
