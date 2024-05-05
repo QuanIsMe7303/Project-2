@@ -11,6 +11,8 @@ import { useMutationHook } from '../../hooks/useMutationHook';
 import * as ProductService from '../../services/ProductService';
 import Loading from '../LoadingComponent/Loading';
 import * as message from '../../components/Message/Message';
+import { useQuery } from '@tanstack/react-query';
+import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
 
 const cx = classNames.bind(styles);
 
@@ -26,13 +28,61 @@ const AdminProduct = () => {
         countInStock: '',
     });
 
+    const [form] = Form.useForm();
+
     const mutation = useMutationHook((data) => {
         const { name, price, description, rating, image, type, countInStock } = data;
         const res = ProductService.createProduct({ name, price, description, rating, image, type, countInStock });
         return res;
     });
 
+    const getAllProduct = async () => {
+        const res = await ProductService.getAllProduct();
+        return res;
+    };
+
     const { data, isPending, isSuccess, isError } = mutation;
+    const { isLoading: isLoadingProducts, data: products } = useQuery({
+        queryKey: ['products'],
+        queryFn: getAllProduct,
+    });
+
+    const renderAction = () => {
+        return (
+            <div className={cx('table-action')}>
+                <DeleteOutlined style={{color: 'red', cursor: 'pointer'}} />
+                <EditOutlined style={{color: '#3C5B6F', cursor: 'pointer'}} />
+            </div>
+        );
+    };
+
+    const columns = [
+        {
+            title: 'Tên sản phẩm',
+            dataIndex: 'name',
+            render: (text) => <a>{text}</a>,
+        },
+        {
+            title: 'Giá',
+            dataIndex: 'price',
+        },
+        {
+            title: 'Đánh giá',
+            dataIndex: 'rating',
+        },
+        {
+            title: 'Loại',
+            dataIndex: 'type',
+        },
+        {
+            title: 'Action',
+            dataIndex: 'action',
+            render: renderAction,
+        },
+    ];
+    const tableData = products?.data.map((product) => {
+        return { ...product, key: product._id };
+    });
 
     useEffect(() => {
         if (isSuccess && data?.status === 'OK') {
@@ -54,6 +104,7 @@ const AdminProduct = () => {
             type: '',
             countInStock: '',
         });
+        form.resetFields();
     };
 
     const onFinish = () => {
@@ -90,8 +141,9 @@ const AdminProduct = () => {
             </Button>
 
             <div>
-                <TableComponent />
+                <TableComponent columns={columns} data={tableData} isLoading={isLoadingProducts} />
             </div>
+
             <Modal title="Tạo sản phẩm" open={isModalOpen} onCancel={handleCancel} footer={null}>
                 <Loading isLoading={isPending}>
                     <AddProductForm
@@ -110,6 +162,7 @@ const AdminProduct = () => {
                         }}
                         onFinish={onFinish}
                         autoComplete="off"
+                        form={form}
                     >
                         <Form.Item
                             label="Tên sản phẩm"
@@ -197,7 +250,15 @@ const AdminProduct = () => {
                             />
                         </Form.Item>
 
-                        <CenteredRow label="Hình ảnh" name="image">
+                        <CenteredRow
+                            label="Hình ảnh"
+                            name="image"
+                            rules={[
+                                {
+                                    required: true,
+                                },
+                            ]}
+                        >
                             <Upload onChange={handleOnChangeAvatar} showUploadList={false}>
                                 <Button icon={<UploadOutlined />}>Chọn file</Button>
                             </Upload>
