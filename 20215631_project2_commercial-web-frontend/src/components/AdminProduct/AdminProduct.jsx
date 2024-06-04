@@ -1,9 +1,9 @@
 import classNames from 'classnames/bind';
 import styles from './AdminProduct.module.scss';
-import { Button, Form, Modal, Upload } from 'antd';
+import { Button, Form, Input, Modal, Space, Upload } from 'antd';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import TableComponent from '../TableComponent/TableComponent';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import InputComponent from '../InputComponent/InputComponent';
 import { AddProductForm, CenteredRow } from './style';
 import { getBase64 } from '../../utils';
@@ -12,14 +12,19 @@ import * as ProductService from '../../services/ProductService';
 import Loading from '../LoadingComponent/Loading';
 import * as message from '../../components/Message/Message';
 import { useQuery } from '@tanstack/react-query';
-import { DeleteOutlined, EditOutlined } from '@ant-design/icons';
+import { DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
 import DrawerComponent from '../DrawerComponent/DrawerComponent';
 import { useSelector } from 'react-redux';
 import ModalComponent from '../ModalComponent/ModalComponent';
+import Highlighter from 'react-highlight-words';
 
 const cx = classNames.bind(styles);
 
 const AdminProduct = () => {
+    const [searchText, setSearchText] = useState('');
+    const [searchedColumn, setSearchedColumn] = useState('');
+    const searchInput = useRef(null);
+
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rowSelected, setRowSelected] = useState('');
     const [isOpenDrawer, setIsOpenDrawer] = useState(false);
@@ -142,19 +147,153 @@ const AdminProduct = () => {
         );
     };
 
+    const handleSearch = (selectedKeys, confirm, dataIndex) => {
+        confirm();
+        // setSearchText(selectedKeys[0]);
+        // setSearchedColumn(dataIndex);
+    };
+    const handleReset = (clearFilters) => {
+        clearFilters();
+        // setSearchText('');
+    };
+    const getColumnSearchProps = (dataIndex) => ({
+        filterDropdown: ({ setSelectedKeys, selectedKeys, confirm, clearFilters }) => (
+            <div
+                style={{
+                    padding: 8,
+                }}
+                onKeyDown={(e) => e.stopPropagation()}
+            >
+                <InputComponent
+                    ref={searchInput}
+                    placeholder={`Search ${dataIndex}`}
+                    value={selectedKeys[0]}
+                    onChange={(e) => setSelectedKeys(e.target.value ? [e.target.value] : [])}
+                    onPressEnter={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                    style={{
+                        marginBottom: 8,
+                        display: 'block',
+                    }}
+                />
+                <Space>
+                    <Button
+                        type="primary"
+                        onClick={() => handleSearch(selectedKeys, confirm, dataIndex)}
+                        icon={<SearchOutlined />}
+                        size="small"
+                        style={{
+                            width: 90,
+                        }}
+                    >
+                        Search
+                    </Button>
+                    <Button
+                        onClick={() => clearFilters && handleReset(clearFilters)}
+                        size="small"
+                        style={{
+                            width: 90,
+                        }}
+                    >
+                        Reset
+                    </Button>
+                </Space>
+            </div>
+        ),
+        filterIcon: (filtered) => (
+            <SearchOutlined
+                style={{
+                    color: filtered ? '#1677ff' : undefined,
+                }}
+            />
+        ),
+        onFilter: (value, record) => record[dataIndex].toString().toLowerCase().includes(value.toLowerCase()),
+        onFilterDropdownOpenChange: (visible) => {
+            if (visible) {
+                setTimeout(() => searchInput.current?.select(), 100);
+            }
+        },
+        // render: (text) =>
+        //     searchedColumn === dataIndex ? (
+        //         <Highlighter
+        //             highlightStyle={{
+        //                 backgroundColor: '#ffc069',
+        //                 padding: 0,
+        //             }}
+        //             searchWords={[searchText]}
+        //             autoEscape
+        //             textToHighlight={text ? text.toString() : ''}
+        //         />
+        //     ) : (
+        //         text
+        //     ),
+    });
+
     const columns = [
         {
             title: 'Tên sản phẩm',
             dataIndex: 'name',
-            render: (text) => <a>{text}</a>,
+            // render: (text) => <a>{text}</a>,
+            sorter: (a, b) => a.name.length - b.name.length,
+            ...getColumnSearchProps('name'),
         },
         {
             title: 'Giá',
             dataIndex: 'price',
+            sorter: (a, b) => a.price - b.price,
+            filters: [
+                {
+                    text: '< 1000',
+                    value: 'opt1',
+                },
+                {
+                    text: 'Từ 1000 đến 3000',
+                    value: 'opt2',
+                },
+                {
+                    text: '>= 3000',
+                    value: 'opt3',
+                },
+            ],
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => {
+                if (value === 'opt1') return record.price < 1000;
+                else if (value === 'opt2') return record.price >= 1000 && record.price < 3000;
+                else return record.price >= 3000;
+            },
+            width: '30%',
         },
         {
             title: 'Đánh giá',
             dataIndex: 'rating',
+            sorter: (a, b) => a.rating - b.rating,
+            filters: [
+                {
+                    text: '>= 4',
+                    value: 'opt1',
+                },
+                {
+                    text: '3 <= rating < 4',
+                    value: 'opt2',
+                },
+                {
+                    text: '2 <= rating < 3',
+                    value: 'opt3',
+                },
+                {
+                    text: '< 2',
+                    value: 'opt4',
+                },
+            ],
+            filterMode: 'tree',
+            filterSearch: true,
+            onFilter: (value, record) => {
+                if (value === 'opt1') return record.rating >= 4;
+                else if (value === 'opt2') return record.price >= 3 && record.price < 4;
+                else if (value === 'opt3') return record.price >= 2 && record.price < 3;
+                else return record.price < 2;
+            },
+            width: '30%',
         },
         {
             title: 'Loại',
@@ -323,7 +462,7 @@ const AdminProduct = () => {
                 />
             </div>
 
-            <ModalComponent title="Tạo sản phẩm" open={isModalOpen} onCancel={handleCancel} footer={null}>
+            <ModalComponent forceRender title="Tạo sản phẩm" open={isModalOpen} onCancel={handleCancel} footer={null}>
                 <Loading isLoading={isPending}>
                     <AddProductForm
                         name="basic"
@@ -619,6 +758,7 @@ const AdminProduct = () => {
             </DrawerComponent>
 
             <ModalComponent
+                forceRender
                 title="Xóa sản phẩm"
                 open={isDeleteModalOpen}
                 onCancel={handleDeleteCancel}

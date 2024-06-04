@@ -1,10 +1,8 @@
-import axios from 'axios';
 import React, { useEffect, useState } from 'react';
 import { BrowserRouter as Router, Routes, Route } from 'react-router-dom';
 import { routes } from './routes';
 import DefaultComponent from './components/DefaultComponent/DefaultComponent';
 import { Fragment } from 'react';
-import { useQuery } from '@tanstack/react-query';
 import { isJsonString } from './utils';
 import { jwtDecode } from 'jwt-decode';
 import * as UserService from './services/UserService';
@@ -35,7 +33,6 @@ function App() {
             handleGetDetailUser(decoded?.id, storageData);
         }
         setIsLoading(false);
-
     }, []);
 
     const handleDecoded = () => {
@@ -69,6 +66,7 @@ function App() {
         const res = await UserService.getDetailUser(id, token);
         dispatch(updateUser({ ...res?.data, access_token: token }));
     };
+
     return (
         <div>
             <Loading isLoading={isLoading}>
