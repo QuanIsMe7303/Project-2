@@ -11,5 +11,6 @@ router.delete('/delete-user/:id', authMiddleware, userController.deleteUser);
 router.get('/getAll', authMiddleware, userController.getAllUser);
 router.get('/get-detail/:id', authUserMiddleware, userController.getDetailUser);
 router.post('/refresh-token', userController.refreshToken);
+router.post('/delete-many-user', authMiddleware, userController.deleteManyUser);
 
 module.exports = router;

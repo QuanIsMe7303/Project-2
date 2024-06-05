@@ -21,8 +21,6 @@ import Highlighter from 'react-highlight-words';
 const cx = classNames.bind(styles);
 
 const AdminProduct = () => {
-    const [searchText, setSearchText] = useState('');
-    const [searchedColumn, setSearchedColumn] = useState('');
     const searchInput = useRef(null);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
@@ -71,6 +69,13 @@ const AdminProduct = () => {
         return res;
     });
 
+    const mutationDeleteMany = useMutationHook((data) => {
+        const { access_token, ...ids } = data;
+        const res = ProductService.deleteManyProduct(ids, access_token);
+        return res;
+    });
+
+
     const getAllProduct = async () => {
         const res = await ProductService.getAllProduct();
         return res;
@@ -91,8 +96,12 @@ const AdminProduct = () => {
         isError: isErrorDeleted,
     } = mutationDelete;
 
-    console.log('dataUpdated', dataUpdated);
-    console.log('rowSelected', rowSelected);
+    const {
+        data: dataDeletedMany,
+        isPending: isPendingDeletedMany,
+        isSuccess: isSuccessDeletedMany,
+        isError: isErrorDeletedMany,
+    } = mutationDeleteMany;
 
     const queryProduct = useQuery({
         queryKey: ['products'],
@@ -329,6 +338,14 @@ const AdminProduct = () => {
     }, [isSuccessDeleted, isErrorDeleted]);
 
     useEffect(() => {
+        if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+            message.success();
+        } else if (isErrorDeletedMany) {
+            message.error();
+        }
+    }, [isSuccessDeletedMany, isErrorDeletedMany]);
+
+    useEffect(() => {
         if (isSuccessUpdated && dataUpdated?.status === 'OK') {
             message.success();
             handleCloseDrawer();
@@ -340,6 +357,17 @@ const AdminProduct = () => {
     const handleDeleteProduct = () => {
         mutationDelete.mutate(
             { id: rowSelected, token: user?.access_token },
+            {
+                onSettled: () => {
+                    queryProduct.refetch();
+                },
+            },
+        );
+    };
+
+    const handleDeleteManyProduct = (_ids) => {
+        mutationDeleteMany.mutate(
+            { ids: _ids, token: user?.access_token },
             {
                 onSettled: () => {
                     queryProduct.refetch();
@@ -386,7 +414,6 @@ const AdminProduct = () => {
                 queryProduct.refetch();
             },
         });
-        console.log('product', stateProduct);
     };
 
     const handleOnChange = (e) => {
@@ -394,7 +421,6 @@ const AdminProduct = () => {
             ...stateProduct,
             [e.target.name]: e.target.value,
         });
-        console.log(e.target.name, e.target.value);
     };
 
     const handleOnChangeDetail = (e) => {
@@ -452,6 +478,7 @@ const AdminProduct = () => {
                     columns={columns}
                     data={tableData}
                     isLoading={isLoadingProducts}
+                    handleDeleteMany={handleDeleteManyProduct}
                     onRow={(record, rowIndex) => {
                         return {
                             onClick: (event) => {

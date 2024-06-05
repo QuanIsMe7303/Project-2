@@ -6,6 +6,7 @@ import styles from './AdminPage.module.scss';
 import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
 import AdminUser from '../../components/AdminUser/AdminUser';
 import AdminProduct from '../../components/AdminProduct/AdminProduct';
+import HomePage from '../HomePage/HomePage';
 
 const cx = classNames.bind(styles);
 
@@ -94,7 +95,7 @@ const AdminPage = () => {
             case 'product':
                 return <AdminProduct />;
             default:
-                return <></>;
+                return <HomePage></HomePage>;
         }
     };
 

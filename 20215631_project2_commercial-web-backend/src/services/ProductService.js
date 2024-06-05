@@ -170,10 +170,26 @@ const getDetailProduct = (id) => {
     });
 };
 
+const deleteManyProduct = (ids) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            await Product.deleteMany({ _id: ids });
+
+            resolve({
+                status: 'OK',
+                message: 'DELETE PRODUCTS SUCCESS',
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
 module.exports = {
     createProduct,
     updateProduct,
     getDetailProduct,
     deleteProduct,
     getAllProduct,
+    deleteManyProduct,
 };

@@ -44,7 +44,6 @@ const AdminUser = () => {
     const [form] = Form.useForm();
 
     const mutationUpdate = useMutationHook((data) => {
-        console.log('data', data);
         const { id, access_token, ...rests } = data;
         const res = UserService.updateUser(id, { ...rests }, access_token);
         return res;
@@ -56,9 +55,14 @@ const AdminUser = () => {
         return res;
     });
 
+    const mutationDeleteMany = useMutationHook((data) => {
+        const { access_token, ...ids } = data;
+        const res = UserService.deleteManyUser(ids, access_token);
+        return res;
+    });
+
     const getAllUsers = async () => {
         const res = await UserService.getAllUsers();
-        console.log('users', res);
         return res;
     };
 
@@ -76,14 +80,19 @@ const AdminUser = () => {
         isError: isErrorDeleted,
     } = mutationDelete;
 
+    const {
+        data: dataDeletedMany,
+        isPending: isPendingDeletedMany,
+        isSuccess: isSuccessDeletedMany,
+        isError: isErrorDeletedMany,
+    } = mutationDeleteMany;
+
     const queryUser = useQuery({
         queryKey: ['users'],
         queryFn: getAllUsers,
     });
 
-    
     const { isLoading: isLoadingUsers, data: users } = queryUser;
-    console.log('isLoadingUsers', isLoadingUsers);
 
     const fetchGetDetailUser = async (rowSelected) => {
         if (rowSelected) {
@@ -105,25 +114,25 @@ const AdminUser = () => {
     }, [form, stateUserDetail]);
 
     useEffect(() => {
-        if (rowSelected) {
+        if (rowSelected && isOpenDrawer) {
             setIsPendingUpdate(true);
             fetchGetDetailUser(rowSelected);
         }
-    }, [rowSelected]);
+    }, [rowSelected, isOpenDrawer]);
 
-    const handleDetailProduct = () => {
+    const handleDetailUser = () => {
         setIsOpenDrawer(true);
     };
 
-    const handleShowDeleteProduct = () => {
+    const handleShowDeleteUser = () => {
         setIsDeleteModalOpen(true);
     };
 
     const renderAction = () => {
         return (
             <div className={cx('table-action')}>
-                <DeleteOutlined style={{ color: 'red', cursor: 'pointer' }} onClick={handleShowDeleteProduct} />
-                <EditOutlined style={{ color: '#3C5B6F', cursor: 'pointer' }} onClick={handleDetailProduct} />
+                <DeleteOutlined style={{ color: 'red', cursor: 'pointer' }} onClick={handleShowDeleteUser} />
+                <EditOutlined style={{ color: '#3C5B6F', cursor: 'pointer' }} onClick={handleDetailUser} />
             </div>
         );
     };
@@ -253,7 +262,7 @@ const AdminUser = () => {
         return {
             ...user,
             key: user._id,
-            phone: user.phone ? '0' + String(user.phone) : '',
+            phone: user.phone,
             isAdmin: user.isAdmin ? 'Admin' : 'Khách hàng',
         };
     });
@@ -267,6 +276,14 @@ const AdminUser = () => {
         }
     }, [isSuccessUpdated, isErrorUpdated]);
 
+    useEffect(() => {
+        if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+            message.success();
+        } else if (isErrorDeletedMany) {
+            message.error();
+        }
+    }, [isSuccessDeletedMany, isErrorDeletedMany]);
+
     const handleDeleteUser = () => {
         mutationDelete.mutate(
             { id: rowSelected, token: user?.access_token },
@@ -278,11 +295,20 @@ const AdminUser = () => {
         );
     };
 
+    const handleDeleteManyUser = (_ids) => {
+        mutationDeleteMany.mutate(
+            { ids: _ids, token: user?.access_token },
+            {
+                onSettled: () => {
+                    queryUser.refetch();
+                },
+            },
+        );
+    };
+
     const handleDeleteCancel = () => {
         setIsDeleteModalOpen(false);
     };
-
-
 
     const handleCloseDrawer = () => {
         setIsOpenDrawer(false);
@@ -344,6 +370,7 @@ const AdminUser = () => {
                     columns={columns}
                     data={tableData}
                     isLoading={isLoadingUsers}
+                    handleDeleteMany={handleDeleteManyUser}
                     onRow={(record, rowIndex) => {
                         return {
                             onClick: (event) => {
