@@ -26,18 +26,14 @@ const AdminUser = () => {
     const [isOpenDrawer, setIsOpenDrawer] = useState(false);
     const [isPendingUpdate, setIsPendingUpdate] = useState(false);
     const user = useSelector((state) => state?.user);
-    const [stateUser, setStateUser] = useState({
-        name: '',
-        email: '',
-        phone: '',
-        isAdmin: false,
-    });
 
     const [stateUserDetail, setStateUserDetail] = useState({
         name: '',
         email: '',
         phone: '',
         isAdmin: false,
+        avatar: '',
+        address: '',
     });
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
@@ -103,6 +99,8 @@ const AdminUser = () => {
                     email: res?.data?.email,
                     phone: res?.data?.phone,
                     isAdmin: res?.data?.isAdmin,
+                    avatar: res?.data?.avatar,
+                    address: res?.data?.address,
                 });
             }
             setIsPendingUpdate(false);
@@ -232,6 +230,12 @@ const AdminUser = () => {
             ...getColumnSearchProps('email'),
         },
         {
+            title: 'Địa chỉ',
+            dataIndex: 'address',
+            sorter: (a, b) => a.address.length - b.address.length,
+            ...getColumnSearchProps('address'),
+        },
+        {
             title: 'Vai trò',
             dataIndex: 'isAdmin',
             filters: [
@@ -255,6 +259,47 @@ const AdminUser = () => {
             title: '',
             dataIndex: 'action',
             render: renderAction,
+        },
+    ];
+
+    const columnsExport = [
+        {
+            title: 'Tên người dùng',
+            dataIndex: 'name',
+            sorter: (a, b) => a.name.length - b.name.length,
+            ...getColumnSearchProps('name'),
+        },
+        {
+            title: 'Email',
+            dataIndex: 'email',
+            sorter: (a, b) => a.email.length - b.email.length,
+            ...getColumnSearchProps('email'),
+        },
+        {
+            title: 'Địa chỉ',
+            dataIndex: 'address',
+            sorter: (a, b) => a.address.length - b.address.length,
+            ...getColumnSearchProps('address'),
+        },
+        {
+            title: 'Vai trò',
+            dataIndex: 'isAdmin',
+            filters: [
+                {
+                    text: 'Admin',
+                    value: true,
+                },
+                {
+                    text: 'Khách hàng',
+                    value: false,
+                },
+            ],
+        },
+        {
+            title: 'SĐT',
+            dataIndex: 'phone',
+            sorter: (a, b) => a.phone - b.phone,
+            ...getColumnSearchProps('phone'),
         },
     ];
 
@@ -328,18 +373,6 @@ const AdminUser = () => {
         });
     };
 
-    const handleOnChangeAvatar = async (fileInfo) => {
-        // const file = fileList[0];
-        const file = fileInfo.file;
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        setStateUser({
-            ...stateUser,
-            image: file.preview,
-        });
-    };
-
     const handleOnChangeAvatarDetail = async (fileInfo) => {
         // const file = fileList[0];
         const file = fileInfo.file;
@@ -348,7 +381,7 @@ const AdminUser = () => {
         }
         setStateUserDetail({
             ...stateUserDetail,
-            image: file.preview,
+            avatar: file.preview,
         });
     };
 
@@ -368,6 +401,7 @@ const AdminUser = () => {
             <div>
                 <TableComponent
                     columns={columns}
+                    columnsExport={columnsExport}
                     data={tableData}
                     isLoading={isLoadingUsers}
                     handleDeleteMany={handleDeleteManyUser}
@@ -453,9 +487,9 @@ const AdminUser = () => {
                             />
                         </Form.Item>
 
-                        {/* <Form.Item
-                            label="Vai trò"
-                            name="isAdmin"
+                        <Form.Item
+                            label="Địa chỉ"
+                            name="address"
                             rules={[
                                 {
                                     required: true,
@@ -464,13 +498,13 @@ const AdminUser = () => {
                             ]}
                         >
                             <InputComponent
-                                value={stateUserDetail.isAdmin}
+                                value={stateUserDetail.address}
                                 onChange={handleOnChangeDetail}
-                                name="isAdmin"
+                                name="address"
                             />
-                        </Form.Item> */}
+                        </Form.Item>
 
-                        {/* <CenteredRow
+                        <CenteredRow
                             label="Hình ảnh"
                             name="image"
                             rules={[
@@ -479,13 +513,13 @@ const AdminUser = () => {
                                 },
                             ]}
                         >
-                            <Upload onChange={handleOnChangeAvatarDetail} showUploadList={false}>
+                            <Upload onChange={handleOnChangeAvatarDetail} showUploadList={false} maxCount={1}>
                                 <Button icon={<UploadOutlined />}>Chọn file</Button>
                             </Upload>
-                            {stateUserDetail?.image && (
-                                <img src={stateUserDetail?.image} alt="avatar" className={cx('avatar')} />
+                            {stateUserDetail?.avatar && (
+                                <img src={stateUserDetail?.avatar} alt="avatar" className={cx('avatar')} />
                             )}
-                        </CenteredRow> */}
+                        </CenteredRow>
 
                         <Form.Item
                             wrapperCol={{

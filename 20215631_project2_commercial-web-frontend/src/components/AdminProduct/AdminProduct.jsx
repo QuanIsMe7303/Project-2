@@ -75,7 +75,6 @@ const AdminProduct = () => {
         return res;
     });
 
-
     const getAllProduct = async () => {
         const res = await ProductService.getAllProduct();
         return res;
@@ -315,6 +314,29 @@ const AdminProduct = () => {
         },
     ];
 
+    const columnsExport = [
+        {
+            title: 'Tên sản phẩm',
+            dataIndex: 'name',
+            sorter: (a, b) => a.name.length - b.name.length,
+            ...getColumnSearchProps('name'),
+        },
+        {
+            title: 'Giá',
+            dataIndex: 'price',
+            sorter: (a, b) => a.price - b.price,
+        },
+        {
+            title: 'Đánh giá',
+            dataIndex: 'rating',
+            sorter: (a, b) => a.rating - b.rating,
+        },
+        {
+            title: 'Loại',
+            dataIndex: 'type',
+        },
+    ];
+
     const tableData = products?.data.map((product) => {
         return { ...product, key: product._id };
     });
@@ -476,6 +498,7 @@ const AdminProduct = () => {
             <div>
                 <TableComponent
                     columns={columns}
+                    columnsExport={columnsExport}
                     data={tableData}
                     isLoading={isLoadingProducts}
                     handleDeleteMany={handleDeleteManyProduct}

@@ -95,7 +95,7 @@ const AdminPage = () => {
             case 'product':
                 return <AdminProduct />;
             default:
-                return <HomePage></HomePage>;
+                return <></>;
         }
     };
 
