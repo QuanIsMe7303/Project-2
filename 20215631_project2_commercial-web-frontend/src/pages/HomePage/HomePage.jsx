@@ -7,18 +7,40 @@ import images from '../../assets/images';
 import CardComponent from '../../components/CartComponent/CartComponent';
 import { useQuery } from '@tanstack/react-query';
 import * as ProductService from '../../services/ProductService';
+import { useSelector } from 'react-redux';
+import { useEffect, useRef, useState } from 'react';
+import Loading from '../../components/LoadingComponent/Loading';
+import { useDebounce } from '../../hooks/useDebounce';
 
 const cx = classNames.bind(styles);
 
 const HomePage = () => {
+    const searchProductValue = useSelector((state) => state.product?.search);
+    const searchDebounce = useDebounce(searchProductValue, 1000);
+    const refSearch = useRef(false);
+    const [stateProducts, setStateProducts] = useState([]);
+    const [isLoadingProducts, setIsLoadingProducts] = useState(false);
     const arr = ['Điện thoại', 'Laptop', 'Máy tính bảng'];
     const sliderArr = [images.slider1, images.slider2, images.slider3];
 
-    const fetchProductAll = async () => {
-        const res = await ProductService.getAllProduct();
-        console.log(res);
-        return res;
+    const fetchProductAll = async (search) => {
+        let res;
+        if (search) {
+            res = await ProductService.getAllProduct(search);
+        } else {
+            res = await ProductService.getAllProduct();
+        }
+        setStateProducts(res?.data);
     };
+
+    useEffect(() => {
+        if (refSearch.current) {
+            setIsLoadingProducts(true);
+            fetchProductAll(searchDebounce);
+        }
+        refSearch.current = true;
+        setIsLoadingProducts(false);
+    }, [searchDebounce]);
 
     const { isPending, data: products } = useQuery({
         queryKey: ['products'],
@@ -26,7 +48,11 @@ const HomePage = () => {
         option: { retry: 3, retryDelay: 1000 },
     });
 
-    console.log('data', products);
+    useEffect(() => {
+        if (products?.data?.length > 0) {
+            setStateProducts(products.data);
+        }
+    }, [products]);
 
     return (
         <div className={cx('wrapper')}>
@@ -39,24 +65,26 @@ const HomePage = () => {
                 <SliderComponent arrImage={sliderArr} />
             </div>
 
-            <div className={cx('product-cart-wrapper')}>
-                {products?.data?.map((product) => {
-                    return (
-                        <CardComponent
-                            key={product._id}
-                            countInStock={product.countInStock}
-                            description={product.description}
-                            image={product.image}
-                            name={product.name}
-                            price={product.price}
-                            rating={product.rating}
-                            type={product.type}
-                            numberSold={product.numberSold}
-                            discount={product.discount}
-                        />
-                    );
-                })}
-            </div>
+            <Loading isLoading={isPending || isLoadingProducts}>
+                <div className={cx('product-cart-wrapper')}>
+                    {stateProducts.map((product) => {
+                        return (
+                            <CardComponent
+                                key={product._id}
+                                countInStock={product.countInStock}
+                                description={product.description}
+                                image={product.image}
+                                name={product.name}
+                                price={product.price}
+                                rating={product.rating}
+                                type={product.type}
+                                numberSold={product.numberSold}
+                                discount={product.discount}
+                            />
+                        );
+                    })}
+                </div>
+            </Loading>
         </div>
     );
 };

@@ -9,6 +9,7 @@ import * as UserService from '../../services/UserService';
 import { resetUser } from '../../redux/slices/userSlice';
 import { useEffect, useState } from 'react';
 import Loading from '../LoadingComponent/Loading';
+import { searchProduct } from '../../redux/slices/productSlice';
 
 const cx = className.bind(styles);
 
@@ -19,6 +20,7 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
     const [userName, setUserName] = useState('');
     const [userAvatar, setUserAvatar] = useState('');
     const [loading, setLoading] = useState(false);
+    const [search, setSearch] = useState('');
 
     const handleNavigateLogin = () => {
         navigate('/sign-in');
@@ -54,15 +56,26 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
         </div>
     );
 
+    const onChangeSearchInput = (e) => {
+        console.log('search value', e.target.value);
+        setSearch(e.target.value);
+        dispatch(searchProduct(e.target.value));
+    };
+
     return (
         <div>
             <Row className={cx('wrapper')}>
-                <Col className={cx('logo')} span={3} >
+                <Col className={cx('logo')} span={3}>
                     LOGO
                 </Col>
                 {!isHiddenSearch && (
                     <Col span={12}>
-                        <ButtonInputSearch size="large" placeholder="Tìm kiếm sản phẩm..." textButton="Tìm kiếm" />
+                        <ButtonInputSearch
+                            size="large"
+                            placeholder="Tìm kiếm sản phẩm..."
+                            textButton="Tìm kiếm"
+                            onChange={onChangeSearchInput}
+                        />
                     </Col>
                 )}
                 <Col span={6} className={cx('header-right')}>
