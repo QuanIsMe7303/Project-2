@@ -5,6 +5,7 @@ const ButtonComponent = ({ size, styleButton, styleText, text, disabled, ...rest
     const background_color = styleButton?.backgroundColor;
     return (
         <Button
+            disabled={disabled}
             style={{
                 ...styleButton,
                 background: disabled ? '#bbb' : background_color,

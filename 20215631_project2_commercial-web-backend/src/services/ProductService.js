@@ -93,6 +93,7 @@ const deleteProduct = (id) => {
 const getAllProduct = (limit = 8, page = 0, sort, filter) => {
     return new Promise(async (resolve, reject) => {
         try {
+            console.log('hihi');
             const totalProduct = await Product.countDocuments();
             console.log('filter', filter);
             if (filter) {

@@ -12,13 +12,12 @@ const CardComponent = (props) => {
 
     return (
         <Card
+            style={{width: 'calc(20% - 20px)'}}
             hoverable
-            style={{ width: 240 }}
-            bodyStyle={{ padding: '14px' }}
             cover={
-                <img
+                <img className={cx('card-image')}
                     alt="example"
-                    src="https://cdn2.cellphones.com.vn/insecure/rs:fill:358:358/q:90/plain/https://cellphones.com.vn/media/catalog/product/i/p/iphone-15-pro-max_3.png"
+                    src={image}
                 />
             }
         >

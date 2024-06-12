@@ -16,75 +16,11 @@ const AdminPage = () => {
             key: 'user',
             icon: <UserOutlined />,
             label: 'Người dùng',
-            // children: [
-            //     {
-            //         key: '11',
-            //         label: 'Option 1',
-            //     },
-            //     {
-            //         key: '12',
-            //         label: 'Option 2',
-            //     },
-            //     {
-            //         key: '13',
-            //         label: 'Option 3',
-            //     },
-            //     {
-            //         key: '14',
-            //         label: 'Option 4',
-            //     },
-            // ],
         },
         {
             key: 'product',
             icon: <AppstoreOutlined />,
             label: 'Sản phẩm',
-            // children: [
-            //     {
-            //         key: '21',
-            //         label: 'Option 1',
-            //     },
-            //     {
-            //         key: '22',
-            //         label: 'Option 2',
-            //     },
-            //     {
-            //         key: '23',
-            //         label: 'Submenu',
-            //         children: [
-            //             {
-            //                 key: '231',
-            //                 label: 'Option 1',
-            //             },
-            //             {
-            //                 key: '232',
-            //                 label: 'Option 2',
-            //             },
-            //             {
-            //                 key: '233',
-            //                 label: 'Option 3',
-            //             },
-            //         ],
-            //     },
-            //     {
-            //         key: '24',
-            //         label: 'Submenu 2',
-            //         children: [
-            //             {
-            //                 key: '241',
-            //                 label: 'Option 1',
-            //             },
-            //             {
-            //                 key: '242',
-            //                 label: 'Option 2',
-            //             },
-            //             {
-            //                 key: '243',
-            //                 label: 'Option 3',
-            //             },
-            //         ],
-            //     },
-            // ],
         },
     ];
 

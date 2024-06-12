@@ -4,6 +4,12 @@
     font-weight: 600;
 }
 
+.card-image {
+    object-fit: cover;
+    height: 220px;
+    padding: 10px;
+}
+
 .card-rating_sold {
     display: flex;
     align-items: center;

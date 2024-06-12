@@ -477,6 +477,7 @@ const AdminProduct = () => {
     };
 
     const onUpdateProduct = () => {
+        console.log('product update', stateProductDetail);
         mutationUpdate.mutate(
             { id: rowSelected, access_token: user?.access_token, ...stateProductDetail },
             {
@@ -618,15 +619,7 @@ const AdminProduct = () => {
                             />
                         </Form.Item>
 
-                        <CenteredRow
-                            label="Hình ảnh"
-                            name="image"
-                            rules={[
-                                {
-                                    required: true,
-                                },
-                            ]}
-                        >
+                        <CenteredRow label="Hình ảnh" name="image">
                             <Upload onChange={handleOnChangeAvatar} showUploadList={false}>
                                 <Button icon={<UploadOutlined />}>Chọn file</Button>
                             </Upload>
@@ -670,7 +663,7 @@ const AdminProduct = () => {
                         initialValues={{
                             remember: true,
                         }}
-                        onFinish={onUpdateProduct}
+                        // onFinish={onUpdateProduct}
                         autoComplete="off"
                         form={form}
                     >
@@ -799,7 +792,7 @@ const AdminProduct = () => {
                                 span: 16,
                             }}
                         >
-                            <Button className={cx('submit-btn')} type="primary" htmlType="submit">
+                            <Button className={cx('submit-btn')} type="primary" htmlType="submit" onClick={onUpdateProduct}>
                                 Xác nhận
                             </Button>
                         </Form.Item>

@@ -65,7 +65,7 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
     return (
         <div>
             <Row className={cx('wrapper')}>
-                <Col className={cx('logo')} span={3}>
+                <Col className={cx('logo')} span={3} onClick={() => navigate('/')}>
                     LOGO
                 </Col>
                 {!isHiddenSearch && (
