@@ -4,11 +4,17 @@ import classNames from 'classnames/bind';
 import styles from './CartComponent.module.scss';
 
 import { StarFilled } from '@ant-design/icons';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 const CardComponent = (props) => {
-    const { countInStock, description, image, name, price, rating, type, numberSold, discount } = props;
+    const { id, countInStock, description, image, name, price, rating, type, numberSold, discount } = props;
+    const navigate = useNavigate();
+
+    const handleDetailProduct = (id) => {
+        navigate(`/products-detail/${id}`);
+    }
 
     return (
         <Card
@@ -20,6 +26,7 @@ const CardComponent = (props) => {
                     src={image}
                 />
             }
+            onClick={() => handleDetailProduct(id)}
         >
             <p className={cx('card-name')}>{name}</p>
             <div className={cx('card-rating_sold')}>

@@ -17,6 +17,10 @@
     place-items: center;
 }
 
+.name {
+    font-size: 3.2rem;
+}
+
 .rating-wrapper {
     display: flex;
     align-items: center;
@@ -28,28 +32,46 @@
 }
 
 .price {
-    font-size: 3rem;
+    font-size: 2.8rem;
     font-weight: 500;
-    margin-top: 20px;
+    margin: 20px 0;
 }
 
 .quantity {
     display: flex;
     align-items: center;
     gap: 16px;
+    margin-bottom: 30px;
 }
 
 .quantity-label {
     font-size: 1.4rem;
+
 }
 
 .quantity-action {
     display: flex;
     align-items: center;
+    gap: 4px;
+}
+
+.description {
+    h4 {
+        margin: 0;
+        font-size: 1.4rem;
+    }
+
+    p {
+        font-size: 1.4rem;
+    }
+
+    display: flex;
+    align-items: center;
+    gap: 10px;
 }
 
 .buy-button {
-    margin-top: 70px;
+    margin-top: 120px;
     &:hover {
         opacity: 0.75;
     }
