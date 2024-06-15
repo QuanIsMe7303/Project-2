@@ -24,7 +24,7 @@ const HomePage = () => {
     const [total, setTotal] = useState(0);
     const [page, setPage] = useState(0);
     const [productLimit, setProductLimit] = useState(5);
-    const arr = ['Điện thoại', 'Laptop', 'Máy tính bảng'];
+    const [productTypes, setProductTypes] = useState([]);
     const sliderArr = [images.slider1, images.slider2, images.slider3];
 
     const fetchProductAll = async (context) => {
@@ -41,7 +41,6 @@ const HomePage = () => {
 
             if (res && res.data) {
                 if (search?.length > 0 || refSearch.current) {
-                    console.log(res);
                     setTotal(res.total);
                     setPage(res.totalPage);
                     setStateProducts(res.data);
@@ -55,29 +54,16 @@ const HomePage = () => {
             }
         } catch (error) {
             console.error('Error fetching products:', error);
-            throw error; // Re-throw the error to be handled by the caller if needed
+            throw error;
         }
     };
 
-    // const fetchProductAll = async (context) => {
-    //     const limit = context?.queryKey && context.queryKey[1];
-    //     const search = context?.queryKey && context.queryKey[2];
-    //     const res = await ProductService.getAllProduct(search, limit);
-    //     if (search?.length > 0 || refSearch.current) {
-    //         setStateProducts(res?.data);
-    //         return [];
-    //     } else {
-    //         return res;
-    //     }
-    //     // console.log(search);
-    //     // let res;
-    //     // if (search) {
-    //     //     res = await ProductService.getAllProduct(search);
-    //     // } else {
-    //     //     res = await ProductService.getAllProduct();
-    //     // }
-    //     // setStateProducts(res?.data);
-    // };
+    const fetchAllTypeProduct = async () => {
+        const res = await ProductService.getAllTypeProduct();
+        if (res?.status === 'OK') {
+            setProductTypes(res?.data);
+        }
+    }
 
     const { isPending, data: products } = useQuery({
         queryKey: ['products', productLimit, searchDebounce],
@@ -85,11 +71,12 @@ const HomePage = () => {
         option: { retry: 3, retryDelay: 1000, keepPreviousData: true },
     });
 
-    console.log('stateProducts', stateProducts, total);
+    useEffect(() => {
+        fetchAllTypeProduct();
+    }, [])
 
     useEffect(() => {
         if (products?.data?.length > 0) {
-            // console.log('products', products);
             setTotal(products?.total);
             setStateProducts(products.data);
         }
@@ -107,7 +94,7 @@ const HomePage = () => {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('nav')}>
-                {arr.map((item, index) => {
+                {productTypes.map((item, index) => {
                     return <ProductTypes name={item} key={index} />;
                 })}
             </div>

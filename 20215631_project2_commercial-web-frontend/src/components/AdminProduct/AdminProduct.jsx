@@ -1,12 +1,12 @@
 import classNames from 'classnames/bind';
 import styles from './AdminProduct.module.scss';
-import { Button, Form, Input, Modal, Space, Upload } from 'antd';
+import { Button, Form, Input, Modal, Select, Space, Upload } from 'antd';
 import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import TableComponent from '../TableComponent/TableComponent';
 import { useEffect, useRef, useState } from 'react';
 import InputComponent from '../InputComponent/InputComponent';
 import { AddProductForm, CenteredRow } from './style';
-import { getBase64 } from '../../utils';
+import { getBase64, renderOptions } from '../../utils';
 import { useMutationHook } from '../../hooks/useMutationHook';
 import * as ProductService from '../../services/ProductService';
 import Loading from '../LoadingComponent/Loading';
@@ -22,12 +22,14 @@ const cx = classNames.bind(styles);
 
 const AdminProduct = () => {
     const searchInput = useRef(null);
+    const user = useSelector((state) => state?.user);
 
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [rowSelected, setRowSelected] = useState('');
     const [isOpenDrawer, setIsOpenDrawer] = useState(false);
     const [isPendingUpdate, setIsPendingUpdate] = useState(false);
-    const user = useSelector((state) => state?.user);
+    const [typeSelect, setTypeSelect] = useState('');
+
     const [stateProduct, setStateProduct] = useState({
         name: '',
         price: '',
@@ -36,8 +38,8 @@ const AdminProduct = () => {
         image: '',
         type: '',
         countInStock: '',
+        newType: '',
     });
-
     const [stateProductDetail, setStateProductDetail] = useState({
         name: '',
         price: '',
@@ -80,6 +82,14 @@ const AdminProduct = () => {
         return res;
     };
 
+    const fetchAllTypeProduct = async () => {
+        const res = await ProductService.getAllTypeProduct();
+        // if (res?.status === 'OK') {
+        // setProductTypes(res?.data);
+        // }/
+        return res;
+    };
+
     const { data, isPending, isSuccess, isError } = mutation;
     const {
         data: dataUpdated,
@@ -105,6 +115,11 @@ const AdminProduct = () => {
     const queryProduct = useQuery({
         queryKey: ['products'],
         queryFn: getAllProduct,
+    });
+
+    const typeProduct = useQuery({
+        queryKey: ['type-product'],
+        queryFn: fetchAllTypeProduct,
     });
 
     const { isLoading: isLoadingProducts, data: products } = queryProduct;
@@ -431,7 +446,16 @@ const AdminProduct = () => {
     };
 
     const onFinish = () => {
-        mutation.mutate(stateProduct, {
+        const params = {
+            name: stateProduct.name,
+            price: stateProduct.price,
+            description: stateProduct.description,
+            rating: stateProduct.rating,
+            image: stateProduct.image,
+            type: stateProduct.type === 'add-type' ? stateProduct.newType : stateProduct.type,
+            countInStock: stateProduct.countInStock,
+        };
+        mutation.mutate(params, {
             onSettled: () => {
                 queryProduct.refetch();
             },
@@ -451,6 +475,15 @@ const AdminProduct = () => {
             [e.target.name]: e.target.value,
         });
     };
+
+    const handleOnChangeSelectType = (value) => {
+        setStateProduct({
+            ...stateProduct,
+            type: value,
+        });
+    };
+
+    console.log('stateProduct', stateProduct);
 
     const handleOnChangeAvatar = async (fileInfo) => {
         // const file = fileList[0];
@@ -552,12 +585,38 @@ const AdminProduct = () => {
                             rules={[
                                 {
                                     required: true,
-                                    message: 'Vui lòng nhập loại sản phẩm!',
+                                    message: 'Vui lòng chọn loại sản phẩm!',
                                 },
                             ]}
                         >
-                            <InputComponent value={stateProduct.type} onChange={handleOnChange} name="type" />
+                            <Select
+                                value={stateProduct.type}
+                                onChange={handleOnChangeSelectType}
+                                options={renderOptions(typeProduct?.data?.data)}
+                            />
+                            {/* {typeSelect === 'add_type' && (
+                                <InputComponent value={stateProduct.type} onChange={handleOnChange} name="type" />
+                            )} */}
                         </Form.Item>
+
+                        {stateProduct.type === 'add_type' && (
+                            <Form.Item
+                                label="Thêm loại"
+                                name="new-type"
+                                rules={[
+                                    {
+                                        required: true,
+                                        message: 'Vui lòng nhập loại sản phẩm mới',
+                                    },
+                                ]}
+                            >
+                                <InputComponent
+                                    value={stateProduct.newType}
+                                    onChange={handleOnChange}
+                                    name="new-type"
+                                />
+                            </Form.Item>
+                        )}
 
                         <Form.Item
                             label="Số lượng trong kho"
@@ -792,7 +851,12 @@ const AdminProduct = () => {
                                 span: 16,
                             }}
                         >
-                            <Button className={cx('submit-btn')} type="primary" htmlType="submit" onClick={onUpdateProduct}>
+                            <Button
+                                className={cx('submit-btn')}
+                                type="primary"
+                                htmlType="submit"
+                                onClick={onUpdateProduct}
+                            >
                                 Xác nhận
                             </Button>
                         </Form.Item>
