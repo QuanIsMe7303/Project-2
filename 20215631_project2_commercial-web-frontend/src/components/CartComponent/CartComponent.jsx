@@ -18,7 +18,7 @@ const CardComponent = (props) => {
 
     return (
         <Card
-            style={{width: 'calc(20% - 20px)'}}
+            // style={{width: 'calc(20% - 20px)'}}
             hoverable
             cover={
                 <img className={cx('card-image')}
@@ -38,7 +38,7 @@ const CardComponent = (props) => {
             </div>
 
             <div className={cx('card-price')}>
-                <span className={cx('price')}>{price.toLocaleString('vn-VN') + ' đ'}</span>
+                <span className={cx('price')}>{price?.toLocaleString('vn-VN') + ' đ'}</span>
                 <span className={cx('discount')}>{discount || 5}%</span>
             </div>
         </Card>

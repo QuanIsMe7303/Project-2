@@ -99,7 +99,7 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
                     </Loading>
 
                     {!isHiddenCart && (
-                        <div className={cx('cart-wrapper')}>
+                        <div className={cx('cart-wrapper')} onClick={() => navigate('/order')}>
                             <ShoppingCartOutlined className={cx('cart-icon')} />
                             <span>Giỏ hàng</span>
                         </div>
