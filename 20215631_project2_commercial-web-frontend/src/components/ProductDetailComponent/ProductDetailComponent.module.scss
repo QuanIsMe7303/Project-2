@@ -46,7 +46,6 @@
 
 .quantity-label {
     font-size: 1.4rem;
-
 }
 
 .quantity-action {
@@ -55,7 +54,8 @@
     gap: 4px;
 }
 
-.description {
+.description,
+.address {
     h4 {
         margin: 0;
         font-size: 1.4rem;
@@ -68,6 +68,7 @@
     display: flex;
     align-items: center;
     gap: 10px;
+    margin-top: 20px;
 }
 
 .buy-button {

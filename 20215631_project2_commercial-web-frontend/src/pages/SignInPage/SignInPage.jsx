@@ -2,7 +2,7 @@ import classNames from 'classnames/bind';
 import styles from './SignInPage.module.scss';
 import InputForm from '../../components/InputForm/InputForm';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 import { EyeFilled, EyeInvisibleFilled } from '@ant-design/icons';
 import * as UserService from '../../services/UserService';
@@ -16,6 +16,7 @@ const cx = classNames.bind(styles);
 
 const SignInPage = () => {
     const [isShowPassword, setIsShowPassword] = useState(false);
+    const location = useLocation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const dispatch = useDispatch();
@@ -28,8 +29,11 @@ const SignInPage = () => {
 
     useEffect(() => {
         if (isSuccess) {
-            navigate('/');
-            console.log(JSON.stringify(data?.access_token));
+            if (location?.state) {
+                navigate(location.state);
+            } else {
+                navigate('/');
+            }
 
             localStorage.setItem('access_token', JSON.stringify(data?.access_token));
             if (data?.access_token) {

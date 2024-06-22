@@ -10,12 +10,17 @@ import * as ProductService from '../../services/ProductService';
 import { useQuery } from '@tanstack/react-query';
 import Loading from '../LoadingComponent/Loading.jsx';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
+import { useLocation, useNavigate } from 'react-router-dom';
+import { addOrderProduct } from '../../redux/slices/orderSlice.js';
 const cx = classNames.bind(styles);
 
 const ProductDetailComponent = ({ id }) => {
     const [quantity, setQuantity] = useState(1);
     const user = useSelector((state) => state.user);
+    const navigate = useNavigate();
+    const location = useLocation();
+    const dispatch = useDispatch();
 
     const handleChangeQuantity = (e) => {
         setQuantity(Number(e.target.value));
@@ -35,7 +40,7 @@ const ProductDetailComponent = ({ id }) => {
     });
 
     const handleQuantity = (type) => {
-        if (type === "decrease") {
+        if (type === 'decrease') {
             if (quantity === 1) {
                 setQuantity(1);
             } else {
@@ -44,13 +49,39 @@ const ProductDetailComponent = ({ id }) => {
         } else {
             setQuantity(quantity + 1);
         }
-    }
+    };
+
+    const handleAddOrderProduct = () => {
+        if (!user?.id) {
+            navigate('/sign-in', { state: location.pathname });
+        } else {
+            dispatch(
+                addOrderProduct({
+                    orderItem: {
+                        name: productDetail?.name,
+                        amount: quantity,
+                        image: productDetail?.image,
+                        price: productDetail?.price,
+                        product: productDetail?._id,
+                    },
+                }),
+            );
+        }
+    };
+
+    console.log('productDetail', productDetail);
+    console.log('user', user);
 
     return (
         <Loading isLoading={isPending}>
             <div className={cx('wrapper')}>
                 <Col className={cx('wrapper-left')} span={10}>
-                    <Image style={{ width: '600px' }} src={productDetail?.image} alt="product-main" preview={false} />
+                    <Image
+                        style={{ width: '400px', objectFit: 'cover' }}
+                        src={productDetail?.image}
+                        alt="product-main"
+                        preview={false}
+                    />
                     <Row>
                         <Col className={cx('small-image')} span={6}>
                             <Image src={images.productSmall1} alt="product-small" preview={false} />
@@ -85,7 +116,13 @@ const ProductDetailComponent = ({ id }) => {
                                 size="small"
                                 onClick={() => handleQuantity('decrease')}
                             />
-                            <WrapperInputNumber readOnly min={1} max={99} value={quantity} onChange={handleChangeQuantity} />
+                            <WrapperInputNumber
+                                readOnly
+                                min={1}
+                                max={99}
+                                value={quantity}
+                                onChange={handleChangeQuantity}
+                            />
                             <ButtonComponent
                                 style={{ width: '30px', height: '30px' }}
                                 icon={<PlusOutlined />}
@@ -93,6 +130,11 @@ const ProductDetailComponent = ({ id }) => {
                                 onClick={() => handleQuantity('increase')}
                             />
                         </div>
+                    </div>
+
+                    <div className={cx('address')}>
+                        <h4>Giao đến:</h4>
+                        <p>{productDetail?.address}</p>
                     </div>
 
                     <div className={cx('description')}>
@@ -110,6 +152,7 @@ const ProductDetailComponent = ({ id }) => {
                                 borderRadius: '4px',
                                 color: '#fff',
                             }}
+                            onClick={handleAddOrderProduct}
                             text="Mua ngay"
                             styleText={{
                                 fontSize: '1.3rem',

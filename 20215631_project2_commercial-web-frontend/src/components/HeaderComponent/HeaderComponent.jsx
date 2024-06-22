@@ -1,4 +1,4 @@
-import { Col, Popover, Row } from 'antd';
+import { Badge, Col, Popover, Row } from 'antd';
 import className from 'classnames/bind';
 import styles from './HeaderComponent.module.scss';
 import { UserOutlined, CaretDownOutlined, ShoppingCartOutlined } from '@ant-design/icons';
@@ -10,12 +10,15 @@ import { resetUser } from '../../redux/slices/userSlice';
 import { useEffect, useState } from 'react';
 import Loading from '../LoadingComponent/Loading';
 import { searchProduct } from '../../redux/slices/productSlice';
+import * as message from '../../components/Message/Message';
 
 const cx = className.bind(styles);
 
 const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
     const navigate = useNavigate();
     const user = useSelector((state) => state.user);
+    const order = useSelector((state) => state.order);
+
     const dispatch = useDispatch();
     const [userName, setUserName] = useState('');
     const [userAvatar, setUserAvatar] = useState('');
@@ -29,8 +32,10 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
     const handleLogout = async () => {
         setLoading(true);
         await UserService.logoutUser();
+        localStorage.clear();
         dispatch(resetUser());
         setLoading(false);
+        message.success('Đăng xuất thành công !');
     };
 
     useEffect(() => {
@@ -100,7 +105,9 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
 
                     {!isHiddenCart && (
                         <div className={cx('cart-wrapper')} onClick={() => navigate('/order')}>
-                            <ShoppingCartOutlined className={cx('cart-icon')} />
+                            <Badge count={order?.orderItems.length} size="small">
+                                <ShoppingCartOutlined className={cx('cart-icon')} />
+                            </Badge>
                             <span>Giỏ hàng</span>
                         </div>
                     )}
