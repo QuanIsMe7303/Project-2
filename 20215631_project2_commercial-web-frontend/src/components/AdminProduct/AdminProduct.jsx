@@ -5,7 +5,7 @@ import { PlusOutlined, UploadOutlined } from '@ant-design/icons';
 import TableComponent from '../TableComponent/TableComponent';
 import { useEffect, useRef, useState } from 'react';
 import InputComponent from '../InputComponent/InputComponent';
-import { AddProductForm, CenteredRow } from './style';
+import { AddForm, CenteredRow } from './style';
 import { getBase64, renderOptions } from '../../utils';
 import { useMutationHook } from '../../hooks/useMutationHook';
 import * as ProductService from '../../services/ProductService';
@@ -39,6 +39,7 @@ const AdminProduct = () => {
         type: '',
         countInStock: '',
         newType: '',
+        discount: '',
     });
     const [stateProductDetail, setStateProductDetail] = useState({
         name: '',
@@ -48,14 +49,24 @@ const AdminProduct = () => {
         image: '',
         type: '',
         countInStock: '',
+        discount: '',
     });
     const [isDeleteModalOpen, setIsDeleteModalOpen] = useState(false);
 
     const [form] = Form.useForm();
 
     const mutation = useMutationHook((data) => {
-        const { name, price, description, rating, image, type, countInStock } = data;
-        const res = ProductService.createProduct({ name, price, description, rating, image, type, countInStock });
+        const { name, price, description, rating, image, type, countInStock, discount } = data;
+        const res = ProductService.createProduct({
+            name,
+            price,
+            description,
+            rating,
+            image,
+            type,
+            countInStock,
+            discount,
+        });
         return res;
     });
 
@@ -136,6 +147,7 @@ const AdminProduct = () => {
                     image: res?.data?.image,
                     type: res?.data?.type,
                     countInStock: res?.data?.countInStock,
+                    discount: res?.data?.discount,
                 });
             }
             setIsPendingUpdate(false);
@@ -353,7 +365,7 @@ const AdminProduct = () => {
     ];
 
     const tableData = products?.data.map((product) => {
-        return { ...product, key: product._id };
+        return { ...product, price: product.price.toLocaleString('vn-VN') + ' đ', key: product._id };
     });
 
     useEffect(() => {
@@ -427,6 +439,7 @@ const AdminProduct = () => {
             image: '',
             type: '',
             countInStock: '',
+            discount: '',
         });
         form.resetFields();
     };
@@ -454,6 +467,7 @@ const AdminProduct = () => {
             image: stateProduct.image,
             type: stateProduct.type === 'add-type' ? stateProduct.newType : stateProduct.type,
             countInStock: stateProduct.countInStock,
+            discount: stateProduct.discount,
         };
         mutation.mutate(params, {
             onSettled: () => {
@@ -548,7 +562,7 @@ const AdminProduct = () => {
 
             <ModalComponent forceRender title="Tạo sản phẩm" open={isModalOpen} onCancel={handleCancel} footer={null}>
                 <Loading isLoading={isPending}>
-                    <AddProductForm
+                    <AddForm
                         name="basic"
                         labelCol={{
                             span: 8,
@@ -662,6 +676,19 @@ const AdminProduct = () => {
                         </Form.Item>
 
                         <Form.Item
+                            label="Giảm giá"
+                            name="discount"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập giảm giá sản phẩm!',
+                                },
+                            ]}
+                        >
+                            <InputComponent value={stateProduct.discount} onChange={handleOnChange} name="discount" />
+                        </Form.Item>
+
+                        <Form.Item
                             label="Mô tả"
                             name="description"
                             rules={[
@@ -697,7 +724,7 @@ const AdminProduct = () => {
                                 Xác nhận
                             </Button>
                         </Form.Item>
-                    </AddProductForm>
+                    </AddForm>
                 </Loading>
             </ModalComponent>
 
@@ -708,7 +735,7 @@ const AdminProduct = () => {
                 width="90%"
             >
                 <Loading isLoading={isPendingUpdate}>
-                    <AddProductForm
+                    <AddForm
                         name="basic"
                         labelCol={{
                             span: 6,
@@ -812,6 +839,23 @@ const AdminProduct = () => {
                         </Form.Item>
 
                         <Form.Item
+                            label="Giảm giá"
+                            name="discount"
+                            rules={[
+                                {
+                                    required: true,
+                                    message: 'Vui lòng nhập giảm giá sản phẩm!',
+                                },
+                            ]}
+                        >
+                            <InputComponent
+                                value={stateProductDetail.discount}
+                                onChange={handleOnChangeDetail}
+                                name="discount"
+                            />
+                        </Form.Item>
+
+                        <Form.Item
                             label="Mô tả"
                             name="description"
                             rules={[
@@ -860,7 +904,7 @@ const AdminProduct = () => {
                                 Xác nhận
                             </Button>
                         </Form.Item>
-                    </AddProductForm>
+                    </AddForm>
                 </Loading>
             </DrawerComponent>
 

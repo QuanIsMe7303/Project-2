@@ -1,7 +1,6 @@
 import classNames from 'classnames/bind';
 import styles from './AdminUser.module.scss';
 import { Button, Form, Space, Upload } from 'antd';
-import { PlusOutlined } from '@ant-design/icons';
 import TableComponent from '../TableComponent/TableComponent';
 import ModalComponent from '../ModalComponent/ModalComponent';
 import Loading from '../LoadingComponent/Loading';
@@ -15,7 +14,7 @@ import { useSelector } from 'react-redux';
 import { useMutationHook } from '../../hooks/useMutationHook';
 import * as UserService from '../../services/UserService';
 import { UploadOutlined, DeleteOutlined, EditOutlined, SearchOutlined } from '@ant-design/icons';
-import { AddProductForm, CenteredRow } from '../AdminProduct/style';
+import { AddForm, CenteredRow } from '../AdminProduct/style';
 
 const cx = classNames.bind(styles);
 
@@ -58,7 +57,7 @@ const AdminUser = () => {
     });
 
     const getAllUsers = async () => {
-        const res = await UserService.getAllUsers();
+        const res = await UserService.getAllUsers(user?.access_token);
         return res;
     };
 
@@ -422,7 +421,7 @@ const AdminUser = () => {
                 width="90%"
             >
                 <Loading isLoading={isPendingUpdate}>
-                    <AddProductForm
+                    <AddForm
                         name="basic"
                         labelCol={{
                             span: 6,
@@ -531,7 +530,7 @@ const AdminUser = () => {
                                 Xác nhận
                             </Button>
                         </Form.Item>
-                    </AddProductForm>
+                    </AddForm>
                 </Loading>
             </DrawerComponent>
 

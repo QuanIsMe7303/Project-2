@@ -1,7 +1,7 @@
 import { Form } from "antd";
 import styled from "styled-components";
 
-export const AddProductForm = styled(Form) `
+export const AddForm = styled(Form) `
     .ant-form-item-label {
         text-align: start;
     }

@@ -4,7 +4,7 @@ const { generalAccessToken, generalRefreshToken } = require('./JwtService');
 
 const createProduct = (newProduct) => {
     return new Promise(async (resolve, reject) => {
-        const { name, image, type, countInStock, price, rating, description } = newProduct;
+        const { name, image, type, countInStock, price, rating, description, discount } = newProduct;
         try {
             // Kiểm tra email đã tồn tại hay chưa
             const checkProduct = await Product.findOne({
@@ -25,6 +25,7 @@ const createProduct = (newProduct) => {
                 price,
                 rating,
                 description,
+                discount,
             });
             if (newProduct) {
                 resolve({
@@ -90,12 +91,11 @@ const deleteProduct = (id) => {
     });
 };
 
-const getAllProduct = (limit = 8, page = 0, sort, filter) => {
+const getAllProduct = (limit, page = 0, sort, filter) => {
     return new Promise(async (resolve, reject) => {
         try {
-            console.log('hihi');
             const totalProduct = await Product.countDocuments();
-            console.log('filter', filter);
+            let allProduct = [];
             if (filter) {
                 const label = filter[0];
                 const allProductFilter = await Product.find({
@@ -129,9 +129,14 @@ const getAllProduct = (limit = 8, page = 0, sort, filter) => {
                     totalPage: Math.ceil(totalProduct / limit),
                 });
             }
-            const allProduct = await Product.find()
-                .limit(limit)
-                .skip(page * limit);
+
+            if (!limit) {
+                allProduct = await Product.find();
+            } else {
+                allProduct = await Product.find()
+                    .limit(limit)
+                    .skip(page * limit);
+            }
 
             resolve({
                 status: 'OK',
@@ -201,7 +206,6 @@ const getAllType = () => {
         }
     });
 };
-
 
 module.exports = {
     createProduct,
