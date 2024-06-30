@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
 import classNames from 'classnames/bind';
 import styles from './OrderPage.module.scss';
-import { Checkbox, Form } from 'antd';
+import { Checkbox, Form, Steps } from 'antd';
 import { DeleteOutlined, MinusOutlined, PlusOutlined } from '@ant-design/icons';
 import { WrapperInputNumber } from './style.js';
 import ButtonComponent from '../../components/ButtonComponent/ButtonComponent';
@@ -23,6 +23,7 @@ import { useMutationHook } from '../../hooks/useMutationHook.js';
 import Loading from '../../components/LoadingComponent/Loading.jsx';
 import { updateUser } from '../../redux/slices/userSlice.js';
 import { useNavigate } from 'react-router-dom';
+import ProcessBar from '../../components/ProcessBar/ProcessBar.jsx';
 
 const cx = classNames.bind(styles);
 
@@ -31,6 +32,22 @@ const OrderPage = () => {
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
     const navigate = useNavigate();
+
+    const processBarItems = [
+        {
+            title: 'Giỏ hàng',
+            description: 'Giỏ hàng',
+        },
+        {
+            title: 'Thanh toán',
+            description: 'Thanh toán',
+            // subTitle: 'Left 00:00:08',
+        },
+        {
+            title: 'Đặt hàng',
+            description: 'Đặt hàng',
+        },
+    ];
 
     const [listChecked, setListChecked] = useState([]);
     const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
@@ -185,6 +202,9 @@ const OrderPage = () => {
 
     return (
         <div className={cx('wrapper')}>
+            <div className={cx('process')}>
+                <ProcessBar current={0} items={processBarItems} />
+            </div>
             <h2 className={cx('title')}>Giỏ hàng</h2>
             <div className={cx('container')}>
                 <div className={cx('left')}>

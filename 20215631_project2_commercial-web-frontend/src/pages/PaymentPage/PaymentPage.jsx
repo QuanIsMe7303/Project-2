@@ -13,6 +13,9 @@ import { AddForm } from '../../components/AdminProduct/style.js';
 import { useMutationHook } from '../../hooks/useMutationHook.js';
 import Loading from '../../components/LoadingComponent/Loading.jsx';
 import { updateUser } from '../../redux/slices/userSlice.js';
+import { useNavigate } from 'react-router-dom';
+import { removeAllOrdersProduct } from '../../redux/slices/orderSlice.js';
+import ProcessBar from '../../components/ProcessBar/ProcessBar.jsx';
 
 const cx = classNames.bind(styles);
 
@@ -20,6 +23,23 @@ const PaymentPage = () => {
     const order = useSelector((state) => state.order);
     const user = useSelector((state) => state.user);
     const dispatch = useDispatch();
+    const navigate = useNavigate();
+
+    const processBarItems = [
+        {
+            title: 'Giỏ hàng',
+            description: 'Giỏ hàng',
+        },
+        {
+            title: 'Thanh toán',
+            description: 'Thanh toán',
+            // subTitle: 'Left 00:00:08',
+        },
+        {
+            title: 'Đặt hàng',
+            description: 'Đặt hàng',
+        },
+    ];
 
     const [isOpenModalUpdateInfo, setIsOpenModalUpdateInfo] = useState(false);
     const [stateUserDetail, setStateUserDetail] = useState({
@@ -28,8 +48,8 @@ const PaymentPage = () => {
         address: '',
         city: '',
     });
-    const [deliveryMethodValue, setDeliveryMethodValue] = useState(0);
-    const [paymentMethodValue, setPaymentMethodValue] = useState(0);
+    const [deliveryMethodValue, setDeliveryMethodValue] = useState('fast');
+    const [paymentMethodValue, setPaymentMethodValue] = useState('cod');
 
     const [form] = Form.useForm();
 
@@ -64,7 +84,21 @@ const PaymentPage = () => {
 
     useEffect(() => {
         if (isSuccess && dataAddOrder?.status === 'OK') {
+            const orderIds = [];
+            order?.selectedOrderItems?.forEach((item) => {
+                orderIds.push(item.product);
+            });
+            dispatch(removeAllOrdersProduct({ listChecked: orderIds }));
             message.success('Đặt hàng thành công');
+
+            navigate('/order-success', {
+                state: {
+                    deliveryMethodValue,
+                    paymentMethodValue,
+                    orders: order?.selectedOrderItems,
+                    totalPrice: totalPriceMemo,
+                },
+            });
         } else if (isError) {
             message.error();
         }
@@ -173,6 +207,9 @@ const PaymentPage = () => {
 
     return (
         <div className={cx('wrapper')}>
+            <div className={cx('process')}>
+                <ProcessBar current={1} items={processBarItems} />
+            </div>
             <h2 className={cx('title')}>Thanh toán</h2>
             <Loading isLoading={mutationAddOrder.isPending}>
                 <div className={cx('container')}>
@@ -185,8 +222,18 @@ const PaymentPage = () => {
                                     onChange={handleChangeDeliveryMethod}
                                     value={deliveryMethodValue}
                                 >
-                                    <Radio value={0}>Giao hàng tiết kiệm</Radio>
-                                    <Radio value={1}>Giao hàng nhanh</Radio>
+                                    <Radio value={'fast'}>
+                                        <span style={{ color: '#ea8500', fontWeight: 'bold', marginRight: '12px' }}>
+                                            FAST
+                                        </span>
+                                        Giao hàng tiết kiệm
+                                    </Radio>
+                                    <Radio value={'gojek'}>
+                                        <span style={{ color: '#ea8500', fontWeight: 'bold', marginRight: '12px' }}>
+                                            GO_JEK
+                                        </span>
+                                        Giao hàng nhanh
+                                    </Radio>
                                 </Radio.Group>
                             </div>
                         </div>
@@ -198,8 +245,8 @@ const PaymentPage = () => {
                                     onChange={handleChangePaymentMethod}
                                     value={paymentMethodValue}
                                 >
-                                    <Radio value={0}>Thanh toán khi nhận hàng</Radio>
-                                    <Radio value={1}>Thanh toán bằng tài khoản ngân hàng</Radio>
+                                    <Radio value={'cod'}>Thanh toán khi nhận hàng</Radio>
+                                    <Radio value={'transfer'}>Thanh toán bằng tài khoản ngân hàng</Radio>
                                 </Radio.Group>
                             </div>
                         </div>
