@@ -37,6 +37,7 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
         dispatch(resetUser());
         setLoading(false);
         message.success('Đăng xuất thành công !');
+        navigate('/');
     };
 
     const handleClickPopupItem = (type) => {
@@ -45,7 +46,12 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
         } else if (type === 'admin') {
             navigate('/system/admin');
         } else if (type === 'orders') {
-            navigate('/user-orders');
+            navigate('/user-orders', {
+                state: {
+                    id: user?.id,
+                    token: user?.access_token,
+                },
+            });
         }
 
         setIsOpenPopup(false);
@@ -78,7 +84,6 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
     );
 
     const onChangeSearchInput = (e) => {
-        console.log('search value', e.target.value);
         setSearch(e.target.value);
         dispatch(searchProduct(e.target.value));
     };

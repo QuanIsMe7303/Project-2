@@ -84,7 +84,7 @@ const createOrder = (newOrder) => {
 const getDetailOrder = (id) => {
     return new Promise(async (resolve, reject) => {
         try {
-            const order = await Order.findOne({ user: id });
+            const order = await Order.find({ user: id });
 
             if (order === null) {
                 resolve({
@@ -105,7 +105,64 @@ const getDetailOrder = (id) => {
     });
 };
 
+const cancelOrder = (id, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const promise = data.map(async (order) => {
+                const productData = await Product.findOneAndUpdate(
+                    {
+                        _id: order.product,
+                        numberSold: { $gte: order.amount },
+                    },
+                    {
+                        $inc: {
+                            countInStock: +order.amount,
+                            numberSold: -order.amount,
+                        },
+                    },
+                    {
+                        new: true,
+                    },
+                );
+
+                if (productData) {
+                    const orderDeleted = await Order.findByIdAndDelete(id);
+                    if (orderDeleted === null) {
+                        resolve({
+                            status: 'ERR',
+                            message: 'Order is not exist',
+                        });
+                    }
+                } else {
+                    return {
+                        status: 'OK',
+                        message: 'ERR',
+                        id: order.product,
+                    };
+                }
+            });
+            const results = await Promise.all(promise);
+            const newData = results && results.filter((item) => item);
+            if (newData.length) {
+                resolve({
+                    status: 'ERR',
+                    message: `Sản phẩm có id ${newData.join(', ')} không tồn tại`,
+                });
+            }
+            resolve({
+                status: 'OK',
+                message: 'Success',
+                data: newData,
+            });
+        } catch (e) {
+            console.log(e);
+            reject(e);
+        }
+    });
+};
+
 module.exports = {
     createOrder,
     getDetailOrder,
+    cancelOrder,
 };

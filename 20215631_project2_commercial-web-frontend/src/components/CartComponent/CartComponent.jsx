@@ -31,7 +31,7 @@ const CardComponent = (props) => {
                     <span>{rating}</span>
                     <StarFilled className={cx('star-icon')} />
                 </div>
-                <span className={cx('number-sold')}>Đã bán {numberSold || 1000}</span>
+                <span className={cx('number-sold')}>Đã bán {numberSold || 0}</span>
             </div>
 
             <div className={cx('card-price')}>

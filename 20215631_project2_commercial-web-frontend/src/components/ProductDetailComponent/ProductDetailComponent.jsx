@@ -1,10 +1,10 @@
-import { Col, Image, InputNumber, Rate, Row } from 'antd';
+import { Col, Image, Rate, Row } from 'antd';
 import images from '../../assets/images';
 import classNames from 'classnames/bind';
 import styles from './ProductDetailComponent.module.scss';
 import { WrapperInputNumber } from './style.js';
 
-import { StarFilled, PlusOutlined, MinusOutlined } from '@ant-design/icons';
+import { PlusOutlined, MinusOutlined } from '@ant-design/icons';
 import ButtonComponent from '../ButtonComponent/ButtonComponent';
 import * as ProductService from '../../services/ProductService';
 import { useQuery } from '@tanstack/react-query';
@@ -63,6 +63,7 @@ const ProductDetailComponent = ({ id }) => {
                         image: productDetail?.image,
                         price: productDetail?.price,
                         product: productDetail?._id,
+                        discount: productDetail?.discount,
                     },
                 }),
             );
@@ -102,7 +103,7 @@ const ProductDetailComponent = ({ id }) => {
                     <div className={cx('rating-wrapper')}>
                         {/* <span className={cx('rating')}>{renderStars(productDetail?.rating)}</span> */}
                         <Rate allowHalf value={productDetail?.rating} disabled />
-                        <span> | Đã bán 20</span>
+                        <span> | Đã bán: {productDetail?.numberSold}</span>
                     </div>
                     <p className={cx('price')}>{productDetail?.price.toLocaleString('vn-VN') + 'đ'}</p>
 
@@ -134,7 +135,7 @@ const ProductDetailComponent = ({ id }) => {
 
                     <div className={cx('address')}>
                         <h4>Giao đến:</h4>
-                        <p>{productDetail?.address}</p>
+                        <p>{user?.address}</p>
                     </div>
 
                     <div className={cx('description')}>

@@ -168,7 +168,7 @@ const OrderPage = () => {
 
     const priceMemo = useMemo(() => {
         const result = order?.selectedOrderItems?.reduce((total, cur) => {
-            return total + cur.price * cur.amount;
+            return total + (cur.price - (cur.price * cur.discount) / 100) * cur.amount;
         }, 0);
         return result;
     }, [order]);
@@ -190,8 +190,8 @@ const OrderPage = () => {
     }, [priceMemo]);
 
     const totalPriceMemo = useMemo(() => {
-        return priceMemo - priceDiscountMemo + deliveryMemo;
-    }, [priceMemo, priceDiscountMemo, deliveryMemo]);
+        return priceMemo + deliveryMemo;
+    }, [priceMemo, deliveryMemo]);
 
     const handleOnChangeDetail = (e) => {
         setStateUserDetail({
@@ -227,6 +227,7 @@ const OrderPage = () => {
                         <div className={cx('cart-header-label')}>Sản phẩm</div>
                         <div className={cx('cart-header-label')}>Đơn giá</div>
                         <div className={cx('cart-header-label')}>Số lượng</div>
+                        <div className={cx('cart-header-label')}>Giảm giá</div>
                         <div className={cx('cart-header-label')}>Thành tiền</div>
                         <div></div>
                     </div>
@@ -267,9 +268,13 @@ const OrderPage = () => {
                                         onClick={() => handleQuantity('increase', item.product)}
                                     />
                                 </div>
+                                <div className={cx('cart-item-total')}>{item.discount ? item.discount + '%' : 0}</div>
                                 <div className={cx('cart-item-total')}>
-                                    {(item.price * item.amount).toLocaleString('vn-VN') + ' đ'}
+                                    {((item.price - (item.price * item.discount) / 100) * item.amount).toLocaleString(
+                                        'vn-VN',
+                                    ) + ' đ'}
                                 </div>
+
                                 <div className={cx('cart-item-delete')}>
                                     <DeleteOutlined
                                         style={{ color: 'red' }}
@@ -297,10 +302,10 @@ const OrderPage = () => {
                         <p>Tạm tính</p>
                         <span>{priceMemo.toLocaleString('vn-VN') + ' đ'}</span>
                     </div>
-                    <div className={cx('right-row')}>
+                    {/* <div className={cx('right-row')}>
                         <p>Giảm giá</p>
-                        <span>{priceDiscountMemo + '%'}</span>
-                    </div>
+                        <span>{}</span>
+                    </div> */}
                     <div className={cx('right-row')}>
                         <p>Phí vận chuyển</p>
                         <span>{deliveryMemo.toLocaleString('vn-VN') + ' đ'}</span>

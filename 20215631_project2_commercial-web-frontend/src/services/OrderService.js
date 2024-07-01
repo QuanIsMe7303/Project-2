@@ -18,3 +18,16 @@ export const getOrderByUserId = async (userId, access_token) => {
     });
     return res.data;
 };
+
+export const cancelOrder = async (id, access_token, orderItems) => {
+    const res = await axiosJWT.delete(
+        `${process.env.REACT_APP_API_URL}/order/${id}`,
+        { data: orderItems },
+        {
+            headers: {
+                token: `Bearer ${access_token}`,
+            },
+        },
+    );
+    return res.data;
+};

@@ -321,6 +321,15 @@ const AdminUser = () => {
     }, [isSuccessUpdated, isErrorUpdated]);
 
     useEffect(() => {
+        if (isSuccessDeleted && dataDeleted?.status === 'OK') {
+            message.success();
+            setIsDeleteModalOpen(false);
+        } else if (isErrorDeleted) {
+            message.error();
+        }
+    }, [isSuccessDeleted, isErrorDeleted]);
+
+    useEffect(() => {
         if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
             message.success();
         } else if (isErrorDeletedMany) {
@@ -506,11 +515,11 @@ const AdminUser = () => {
                         <CenteredRow
                             label="Hình ảnh"
                             name="image"
-                            rules={[
-                                {
-                                    required: true,
-                                },
-                            ]}
+                            // rules={[
+                            //     {
+                            //         required: true,
+                            //     },
+                            // ]}
                         >
                             <Upload onChange={handleOnChangeAvatarDetail} showUploadList={false} maxCount={1}>
                                 <Button icon={<UploadOutlined />}>Chọn file</Button>
