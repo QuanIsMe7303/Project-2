@@ -497,8 +497,6 @@ const AdminProduct = () => {
         });
     };
 
-    console.log('stateProduct', stateProduct);
-
     const handleOnChangeAvatar = async (fileInfo) => {
         // const file = fileList[0];
         const file = fileInfo.file;
@@ -524,7 +522,6 @@ const AdminProduct = () => {
     };
 
     const onUpdateProduct = () => {
-        console.log('product update', stateProductDetail);
         mutationUpdate.mutate(
             { id: rowSelected, access_token: user?.access_token, ...stateProductDetail },
             {

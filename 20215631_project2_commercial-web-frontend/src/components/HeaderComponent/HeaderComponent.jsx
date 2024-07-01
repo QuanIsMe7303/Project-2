@@ -24,6 +24,7 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
     const [userAvatar, setUserAvatar] = useState('');
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
+    const [isOpenPopup, setIsOpenPopup] = useState(false);
 
     const handleNavigateLogin = () => {
         navigate('/sign-in');
@@ -38,6 +39,18 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
         message.success('Đăng xuất thành công !');
     };
 
+    const handleClickPopupItem = (type) => {
+        if (type === 'profile') {
+            navigate('/profile-user');
+        } else if (type === 'admin') {
+            navigate('/system/admin');
+        } else if (type === 'orders') {
+            navigate('/user-orders');
+        }
+
+        setIsOpenPopup(false);
+    };
+
     useEffect(() => {
         setLoading(true);
         setUserName(user?.name);
@@ -47,14 +60,17 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
 
     const userMenu = (
         <div className={cx('user-menu')}>
-            <p className={cx('user-menu-item')} onClick={() => navigate('/profile-user')}>
+            <p className={cx('user-menu-item')} onClick={() => handleClickPopupItem('user')}>
                 Thông tin người dùng
             </p>
             {user?.isAdmin && (
-                <p className={cx('user-menu-item')} onClick={() => navigate('/system/admin')}>
+                <p className={cx('user-menu-item')} onClick={() => handleClickPopupItem('admin')}>
                     Quản lý hệ thống
                 </p>
             )}
+            <p className={cx('user-menu-item')} onClick={() => handleClickPopupItem('orders')}>
+                Đơn hàng của tôi
+            </p>
             <p className={cx('user-menu-item')} onClick={handleLogout}>
                 Đăng xuất
             </p>
@@ -92,8 +108,10 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
                                 <UserOutlined className={cx('user-icon')} />
                             )}
                             {user?.access_token ? (
-                                <Popover content={userMenu} trigger="click">
-                                    <span className={cx('user-name')}>{userName?.length ? userName : user?.email}</span>
+                                <Popover content={userMenu} trigger="click" open={isOpenPopup}>
+                                    <span className={cx('user-name')} onClick={() => setIsOpenPopup((prev) => !prev)}>
+                                        {userName?.length ? userName : user?.email}
+                                    </span>
                                 </Popover>
                             ) : (
                                 <div className={cx('text-wrapper')} onClick={handleNavigateLogin}>

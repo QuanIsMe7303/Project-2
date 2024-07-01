@@ -3,7 +3,7 @@ import classNames from 'classnames/bind';
 import styles from './OrderSuccessPage.module.scss';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { orderConstant } from '../../constant.js';
-import ProcessBar from '../../components/Steps/ProcessBar.jsx';
+import ProcessBar from '../../components/ProcessBar/ProcessBar.jsx';
 
 const cx = classNames.bind(styles);
 

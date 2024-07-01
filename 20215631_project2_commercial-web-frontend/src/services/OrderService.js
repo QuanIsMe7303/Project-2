@@ -9,3 +9,12 @@ export const createOrder = async (data, access_token) => {
     });
     return res.data;
 };
+
+export const getOrderByUserId = async (userId, access_token) => {
+    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/order/get-detail/${userId}`, {
+        headers: {
+            token: `Bearer ${access_token}`,
+        },
+    });
+    return res.data;
+};
