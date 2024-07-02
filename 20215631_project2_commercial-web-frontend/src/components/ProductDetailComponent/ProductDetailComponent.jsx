@@ -81,29 +81,15 @@ const ProductDetailComponent = ({ id }) => {
                         style={{ width: '400px', objectFit: 'cover' }}
                         src={productDetail?.image}
                         alt="product-main"
-                        preview={false}
+                        preview={true}
                     />
-                    <Row>
-                        <Col className={cx('small-image')} span={6}>
-                            <Image src={images.productSmall1} alt="product-small" preview={false} />
-                        </Col>
-                        <Col className={cx('small-image')} span={6}>
-                            <Image src={images.productSmall2} alt="product-small" preview={false} />
-                        </Col>
-                        <Col className={cx('small-image')} span={6}>
-                            <Image src={images.productSmall3} alt="product-small" preview={false} />
-                        </Col>
-                        <Col className={cx('small-image')} span={6}>
-                            <Image src={images.productSmall4} alt="product-small" preview={false} />
-                        </Col>
-                    </Row>
                 </Col>
                 <Col className={cx('wrapper-right')} span={14}>
                     <h1 className={cx('name')}>{productDetail?.name}</h1>
                     <div className={cx('rating-wrapper')}>
                         {/* <span className={cx('rating')}>{renderStars(productDetail?.rating)}</span> */}
                         <Rate allowHalf value={productDetail?.rating} disabled />
-                        <span> | Đã bán: {productDetail?.numberSold}</span>
+                        <span> | Đã bán: {productDetail?.numberSold || 0}</span>
                     </div>
                     <p className={cx('price')}>{productDetail?.price.toLocaleString('vn-VN') + 'đ'}</p>
 

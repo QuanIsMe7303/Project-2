@@ -20,8 +20,6 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
     const order = useSelector((state) => state.order);
 
     const dispatch = useDispatch();
-    const [userName, setUserName] = useState('');
-    const [userAvatar, setUserAvatar] = useState('');
     const [loading, setLoading] = useState(false);
     const [search, setSearch] = useState('');
     const [isOpenPopup, setIsOpenPopup] = useState(false);
@@ -29,6 +27,8 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
     const handleNavigateLogin = () => {
         navigate('/sign-in');
     };
+
+    console.log(user);
 
     const handleLogout = async () => {
         setLoading(true);
@@ -59,14 +59,12 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
 
     useEffect(() => {
         setLoading(true);
-        setUserName(user?.name);
-        setUserAvatar(user?.avatar);
         setLoading(false);
     }, [user?.name, user?.avatar]);
 
     const userMenu = (
         <div className={cx('user-menu')}>
-            <p className={cx('user-menu-item')} onClick={() => handleClickPopupItem('user')}>
+            <p className={cx('user-menu-item')} onClick={() => handleClickPopupItem('profile')}>
                 Thông tin người dùng
             </p>
             {user?.isAdmin && (
@@ -107,15 +105,15 @@ const HeaderComponent = ({ isHiddenCart = false, isHiddenSearch = false }) => {
                 <Col span={6} className={cx('header-right')}>
                     <Loading isLoading={loading}>
                         <div className={cx('account-wrapper')}>
-                            {userAvatar ? (
-                                <img className={cx('header-avatar')} src={userAvatar} alt="avatar" />
+                            {user?.avatar ? (
+                                <img className={cx('header-avatar')} src={user?.avatar} alt="avatar" />
                             ) : (
                                 <UserOutlined className={cx('user-icon')} />
                             )}
                             {user?.access_token ? (
                                 <Popover content={userMenu} trigger="click" open={isOpenPopup}>
                                     <span className={cx('user-name')} onClick={() => setIsOpenPopup((prev) => !prev)}>
-                                        {userName?.length ? userName : user?.email}
+                                        {user.name ? user.name : user.email}
                                     </span>
                                 </Popover>
                             ) : (

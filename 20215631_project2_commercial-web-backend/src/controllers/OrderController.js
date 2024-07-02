@@ -58,8 +58,64 @@ const cancelOrder = async (req, res) => {
     }
 };
 
+const getAllOrders = async (req, res) => {
+    try {
+        const response = await OrderService.getAllOrders();
+        return res.status(200).json(response);
+    } catch (e) {
+        console.log(e);
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
+
+const updateOrderStatus = async (req, res) => {
+    try {
+        const orderId = req.params.id;
+        const data = req.body;
+        if (!orderId) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'orderId is required',
+            });
+        }
+        const response = await OrderService.updateOrderStatus(orderId, data);
+        return res.status(200).json(response);
+    } catch (e) {
+        console.log(e);
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
+
+// const updatePaymentStatus = async (req, res) => {
+//     try {
+//         const orderId = req.params.id;
+//         const data = req.body;
+//         if (!orderId) {
+//             return res.status(200).json({
+//                 status: 'ERR',
+//                 message: 'orderId is required',
+//             });
+//         }
+//         const response = await OrderService.updatePaymentStatus(orderId, data);
+//         return res.status(200).json(response);
+//     } catch (e) {
+//         console.log(e);
+//         return res.status(404).json({
+//             message: e,
+//         });
+//     }
+// };
+
 module.exports = {
     createOrder,
     getDetailOrder,
     cancelOrder,
+    getAllOrders,
+    updateOrderStatus,
+    // updateDeliveryStatus,
+    // updatePaymentStatus,
 };

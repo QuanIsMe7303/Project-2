@@ -30,7 +30,6 @@ const UserOrders = () => {
 
     const handleShowOrderDetail = (orderId) => {
         const order = data?.data?.find((order) => order._id === orderId);
-        console.log(order);
         setSelectedOrder(order);
         setModalIsOpen(true);
     };
@@ -39,9 +38,9 @@ const UserOrders = () => {
 
     const handleCancelOrder = (order) => {
         mutation.mutate(
-            { id: order._id, token: state?.token, orderItems: order?.orderItems },
+            { id: order?._id, token: state?.token, orderItems: order?.orderItems },
             {
-                onSuccess: () => {
+                onFinish: () => {
                     queryOrders.refetch();
                 },
             },
@@ -60,8 +59,6 @@ const UserOrders = () => {
             message.error('Xảy ra lỗi');
         }
     }, [isSuccessCancel, isErrorCancel]);
-
-    console.log(data);
 
     return (
         <Loading isLoading={isPending}>

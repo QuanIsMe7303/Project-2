@@ -31,3 +31,22 @@ export const cancelOrder = async (id, access_token, orderItems) => {
     );
     return res.data;
 };
+
+export const updateOrder = async (id, access_token, data) => {
+    console.log('data update', id, access_token, data);
+    const res = await axiosJWT.put(`${process.env.REACT_APP_API_URL}/order/${id}`, data, {
+        headers: {
+            token: `Bearer ${access_token}`,
+        },
+    });
+    return res.data;
+};
+
+export const getAllOrders = async (access_token) => {
+    const res = await axiosJWT.get(`${process.env.REACT_APP_API_URL}/order/getAll`, {
+        headers: {
+            token: `Bearer ${access_token}`,
+        },
+    });
+    return res.data;
+};

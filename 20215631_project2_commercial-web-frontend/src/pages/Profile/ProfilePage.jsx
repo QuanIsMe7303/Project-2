@@ -12,108 +12,104 @@ import { updateUser } from '../../redux/slices/userSlice';
 import { Button, Upload } from 'antd';
 import { UploadOutlined } from '@ant-design/icons';
 import { getBase64 } from '../../utils';
+import { useQuery } from '@tanstack/react-query';
 
 const cx = classNames.bind(styles);
 
 const ProfilePage = () => {
     const user = useSelector((state) => state.user);
 
-    const [name, setName] = useState('');
-    const [email, setEmail] = useState('');
-    const [phone, setPhone] = useState('');
-    const [address, setAddress] = useState('');
-    const [avatar, setAvatar] = useState('');
+    const [userInfo, setUserInfo] = useState({
+        name: '',
+        email: '',
+        phone: '',
+        address: '',
+        avatar: '',
+    });
 
-    const mutation = useMutationHook((data) => {
+    const mutationUpdate = useMutationHook((data) => {
         const { id, access_token, ...rest } = data;
-        UserService.updateUser(id, rest, access_token);
+        return UserService.updateUser(id, rest, access_token);
     });
 
     const dispatch = useDispatch();
-    const { data, isPending, isSuccess, isError } = mutation;
 
     useEffect(() => {
-        setEmail(user?.email);
-        setName(user?.name);
-        setPhone(user?.phone);
-        setAddress(user?.address);
-        setAvatar(user?.avatar);
+        setUserInfo({
+            email: user?.email,
+            name: user?.name,
+            phone: user?.phone,
+            address: user?.address,
+            avatar: user?.avatar,
+        });
     }, [user]);
-
-    useEffect(() => {
-        if (isSuccess) {
-            message.success();
-            handleGetDetailUser(user?.id, user?.access_token);
-        } else if (isError) {
-            message.error();
-        }
-    }, [isSuccess, isError]);
 
     const handleGetDetailUser = async (id, token) => {
         const res = await UserService.getDetailUser(id, token);
         dispatch(updateUser({ ...res?.data, access_token: token }));
+        return res;
     };
 
-    const handleOnChangeName = (e) => {
-        setName(e.target.value);
+    const handleOnChange = (e) => {
+        const { id, value } = e.target;
+        setUserInfo((prev) => ({ ...prev, [id]: value }));
     };
-    const handleOnChangeEmail = (e) => {
-        setEmail(e.target.value);
-    };
-    const handleOnChangePhone = (e) => {
-        setPhone(e.target.value);
-    };
-    const handleOnChangeAddress = (e) => {
-        setAddress(e.target.value);
-    };
+
     const handleOnChangeAvatar = async (fileInfo) => {
-        // const file = fileList[0];
         const file = fileInfo.file;
         if (!file.url && !file.preview) {
             file.preview = await getBase64(file.originFileObj);
         }
-        setAvatar(file.preview);
+        setUserInfo((prev) => ({ ...prev, avatar: file.preview }));
     };
 
+    const queryUser = useQuery({
+        queryKey: ['user'],
+        queryFn: () => handleGetDetailUser(user?.id, user?.access_token),
+    });
+
     const handleUpdate = () => {
-        mutation.mutate({ id: user?.id, email, name, phone, address, avatar, access_token: user?.access_token });
+        mutationUpdate.mutate(
+            { id: user?.id, ...userInfo, access_token: user?.access_token },
+            {
+                onSuccess: () => {
+                    queryUser.refetch();
+                    message.success('Cập nhật thành công');
+                },
+                onError: () => {
+                    message.error('Cập nhật thất bại');
+                },
+            },
+        );
     };
 
     return (
         <div className={cx('wrapper')}>
             <h1 className={cx('title')}>Thông tin người dùng</h1>
-            <Loading isLoading={isPending}>
+            <Loading isLoading={mutationUpdate.isPending}>
                 <div className={cx('main')}>
                     <div className={cx('row')}>
                         <h4 className={cx('label')}>Name</h4>
-                        <InputForm className={cx('input')} id="name" value={name} onChange={handleOnChangeName} />
-                        <ButtonComponent
-                            onClick={handleUpdate}
-                            text={'Cập nhật'}
-                            styleButton={{ height: '100%' }}
-                            styleText={{ color: 'rgb(26, 148, 255)', fontWeight: '600' }}
-                        />
+                        <InputForm className={cx('input')} id="name" value={userInfo.name} onChange={handleOnChange} />
                     </div>
 
                     <div className={cx('row')}>
                         <h4 className={cx('label')}>Email</h4>
-                        <InputForm className={cx('input')} id="email" value={email} onChange={handleOnChangeEmail} />
-                        <ButtonComponent
-                            onClick={handleUpdate}
-                            text={'Cập nhật'}
-                            styleButton={{ height: '100%' }}
-                            styleText={{ color: 'rgb(26, 148, 255)', fontWeight: '600' }}
+                        <InputForm
+                            className={cx('input')}
+                            id="email"
+                            value={userInfo.email}
+                            onChange={handleOnChange}
                         />
                     </div>
 
                     <div className={cx('row')}>
                         <h4 className={cx('label')}>Số điện thoại</h4>
-                        <InputForm className={cx('input')} id="phone" value={phone} onChange={handleOnChangePhone} />
-                        <ButtonComponent
-                            onClick={handleUpdate}
-                            text={'Cập nhật'}
-                            styleButton={{ height: '100%' }}
-                            styleText={{ color: 'rgb(26, 148, 255)', fontWeight: '600' }}
+                        <InputForm
+                            className={cx('input')}
+                            id="phone"
+                            value={userInfo.phone}
+                            onChange={handleOnChange}
                         />
                     </div>
 
@@ -122,14 +118,8 @@ const ProfilePage = () => {
                         <InputForm
                             className={cx('input')}
                             id="address"
-                            value={address}
-                            onChange={handleOnChangeAddress}
-                        />
-                        <ButtonComponent
-                            onClick={handleUpdate}
-                            text={'Cập nhật'}
-                            styleButton={{ height: '100%' }}
-                            styleText={{ color: 'rgb(26, 148, 255)', fontWeight: '600' }}
+                            value={userInfo.address}
+                            onChange={handleOnChange}
                         />
                     </div>
 
@@ -138,16 +128,16 @@ const ProfilePage = () => {
                         <Upload onChange={handleOnChangeAvatar} showUploadList={false}>
                             <Button icon={<UploadOutlined />}>Chọn file</Button>
                         </Upload>
-                        {avatar && <img src={avatar} alt="avatar" className={cx('avatar')} />}
-                        {/* <InputForm className={cx('input')} id="avatar" value={avatar} onChange={handleOnChangeAvatar} /> */}
-                        <ButtonComponent
-                            onClick={handleUpdate}
-                            text={'Cập nhật'}
-                            styleButton={{ height: '100%' }}
-                            styleText={{ color: 'rgb(26, 148, 255)', fontWeight: '600' }}
-                        />
+                        {userInfo.avatar && <img src={userInfo.avatar} alt="avatar" className={cx('avatar')} />}
                     </div>
                 </div>
+
+                <ButtonComponent
+                    onClick={handleUpdate}
+                    text={'Cập nhật'}
+                    styleButton={{ height: '100%', marginLeft: '200px', marginTop: '30px' }}
+                    styleText={{ color: 'rgb(26, 148, 255)', fontWeight: '600' }}
+                />
             </Loading>
         </div>
     );

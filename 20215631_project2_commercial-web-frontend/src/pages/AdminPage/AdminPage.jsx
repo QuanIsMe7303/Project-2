@@ -1,12 +1,12 @@
 import { Menu } from 'antd';
 import { useState } from 'react';
-import { UserOutlined, AppstoreOutlined } from '@ant-design/icons';
+import { UserOutlined, AppstoreOutlined, AuditOutlined } from '@ant-design/icons';
 import classNames from 'classnames/bind';
 import styles from './AdminPage.module.scss';
 import HeaderComponent from '../../components/HeaderComponent/HeaderComponent';
 import AdminUser from '../../components/AdminUser/AdminUser';
 import AdminProduct from '../../components/AdminProduct/AdminProduct';
-import HomePage from '../HomePage/HomePage';
+import AdminOrder from '../../components/AdminOrder/AdminOrder';
 
 const cx = classNames.bind(styles);
 
@@ -22,6 +22,11 @@ const AdminPage = () => {
             icon: <AppstoreOutlined />,
             label: 'Sản phẩm',
         },
+        {
+            key: 'order',
+            icon: <AuditOutlined />,
+            label: 'Đơn hàng',
+        },
     ];
 
     const renderPage = (key) => {
@@ -30,6 +35,8 @@ const AdminPage = () => {
                 return <AdminUser />;
             case 'product':
                 return <AdminProduct />;
+            case 'order':
+                return <AdminOrder />;
             default:
                 return <></>;
         }
@@ -38,7 +45,6 @@ const AdminPage = () => {
     const [keySelected, setKeySelected] = useState('');
 
     const handleOnClick = ({ key }) => {
-        console.log('click', { key });
         setKeySelected(key);
     };
 

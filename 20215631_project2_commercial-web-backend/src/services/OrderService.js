@@ -161,8 +161,83 @@ const cancelOrder = (id, data) => {
     });
 };
 
+const getAllOrders = () => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const allOrders = await Order.find();
+
+            resolve({
+                status: 'OK',
+                message: 'SUCCESS',
+                data: allOrders,
+            });
+        } catch (e) {
+            console.log(e);
+            reject(e);
+        }
+    });
+};
+
+const updateOrderStatus = (id, data) => {
+    return new Promise(async (resolve, reject) => {
+        try {
+            const checkOrder = await Order.findOne({ _id: id });
+
+            if (checkOrder === null) {
+                resolve({
+                    status: 'OK',
+                    message: 'Order is not exist',
+                });
+            }
+
+            const updatedOrder = await Order.findByIdAndUpdate(id, data, {
+                new: true,
+            });
+
+            resolve({
+                status: 'OK',
+                message: 'SUCCESS',
+                data: updatedOrder,
+            });
+        } catch (e) {
+            reject(e);
+        }
+    });
+};
+
+// const updatePaymentStatus = (id, data) => {
+//     return new Promise(async (resolve, reject) => {
+//         try {
+//             const checkOrder = await Order.findOne({ _id: id });
+
+//             if (checkOrder === null) {
+//                 resolve({
+//                     status: 'OK',
+//                     message: 'Order is not exist',
+//                 });
+//             }
+
+//             const updatedOrder = await Order.findByIdAndUpdate(id, data, {
+//                 new: true,
+//             });
+
+//             resolve({
+//                 status: 'OK',
+//                 message: 'SUCCESS',
+//                 data: updatedOrder,
+//             });
+//         } catch (e) {
+//             reject(e);
+//         }
+//     });
+// };
+
 module.exports = {
     createOrder,
     getDetailOrder,
     cancelOrder,
+    getAllOrders,
+    updateOrderStatus,
+    // updateDeliveryStatus,
+    // updatePaymentStatus,
 };

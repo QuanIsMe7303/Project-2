@@ -458,13 +458,14 @@ const AdminProduct = () => {
             description: stateProduct.description,
             rating: stateProduct.rating,
             image: stateProduct.image,
-            type: stateProduct.type === 'add-type' ? stateProduct.newType : stateProduct.type,
+            type: stateProduct.type === 'add_type' ? stateProduct.newType : stateProduct.type,
             countInStock: stateProduct.countInStock,
             discount: stateProduct.discount,
         };
         mutation.mutate(params, {
             onSettled: () => {
                 queryProduct.refetch();
+                typeProduct.refetch();
             },
         });
     };
@@ -606,7 +607,7 @@ const AdminProduct = () => {
                         {stateProduct.type === 'add_type' && (
                             <Form.Item
                                 label="Thêm loại"
-                                name="new-type"
+                                name="newType"
                                 rules={[
                                     {
                                         required: true,
@@ -614,11 +615,7 @@ const AdminProduct = () => {
                                     },
                                 ]}
                             >
-                                <InputComponent
-                                    value={stateProduct.newType}
-                                    onChange={handleOnChange}
-                                    name="new-type"
-                                />
+                                <InputComponent value={stateProduct.newType} onChange={handleOnChange} name="newType" />
                             </Form.Item>
                         )}
 
