@@ -374,34 +374,8 @@ const AdminUser = () => {
         form.resetFields();
     };
 
-    const handleOnChangeDetail = (e) => {
-        setStateUserDetail({
-            ...stateUserDetail,
-            [e.target.name]: e.target.value,
-        });
-    };
-
-    const handleOnChangeAvatarDetail = async (fileInfo) => {
-        // const file = fileList[0];
-        const file = fileInfo.file;
-        if (!file.url && !file.preview) {
-            file.preview = await getBase64(file.originFileObj);
-        }
-        setStateUserDetail({
-            ...stateUserDetail,
-            avatar: file.preview,
-        });
-    };
-
     const onUpdateUser = () => {
-        mutationUpdate.mutate(
-            { id: rowSelected, access_token: user?.access_token, ...stateUserDetail },
-            {
-                onSettled: () => {
-                    queryUser.refetch();
-                },
-            },
-        );
+        handleCloseDrawer();
     };
     return (
         <div className={cx('wrapper')}>
@@ -448,86 +422,21 @@ const AdminUser = () => {
                         autoComplete="on"
                         form={form}
                     >
-                        <Form.Item
-                            label="Tên khách hàng"
-                            name="name"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập tên khách hàng!',
-                                },
-                            ]}
-                        >
-                            <InputComponent value={stateUserDetail.name} onChange={handleOnChangeDetail} name="name" />
+                        <Form.Item label="Tên khách hàng" name="name">
+                            <InputComponent disabled value={stateUserDetail.name} name="name" />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Email"
-                            name="email"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập địa chỉ email!',
-                                },
-                            ]}
-                        >
-                            <InputComponent
-                                value={stateUserDetail.email}
-                                onChange={handleOnChangeDetail}
-                                name="email"
-                            />
+                        <Form.Item label="Email" name="email">
+                            <InputComponent value={stateUserDetail.email} disabled name="email" />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Số điện thoại"
-                            name="phone"
-                            rules={[
-                                {
-                                    required: true,
-                                    message: 'Vui lòng nhập số điện thoại!',
-                                },
-                            ]}
-                        >
-                            <InputComponent
-                                value={stateUserDetail.phone}
-                                onChange={handleOnChangeDetail}
-                                name="phone"
-                            />
+                        <Form.Item label="Số điện thoại" name="phone">
+                            <InputComponent value={stateUserDetail.phone} disabled name="phone" />
                         </Form.Item>
 
-                        <Form.Item
-                            label="Địa chỉ"
-                            name="address"
-                            rules={[
-                                {
-                                    required: true,
-                                    // message: 'Vui lòng nhập giá sản phẩm!',
-                                },
-                            ]}
-                        >
-                            <InputComponent
-                                value={stateUserDetail.address}
-                                onChange={handleOnChangeDetail}
-                                name="address"
-                            />
+                        <Form.Item label="Địa chỉ" name="address">
+                            <InputComponent disabled value={stateUserDetail.address} name="address" />
                         </Form.Item>
-
-                        <CenteredRow
-                            label="Hình ảnh"
-                            name="image"
-                            // rules={[
-                            //     {
-                            //         required: true,
-                            //     },
-                            // ]}
-                        >
-                            <Upload onChange={handleOnChangeAvatarDetail} showUploadList={false} maxCount={1}>
-                                <Button icon={<UploadOutlined />}>Chọn file</Button>
-                            </Upload>
-                            {stateUserDetail?.avatar && (
-                                <img src={stateUserDetail?.avatar} alt="avatar" className={cx('avatar')} />
-                            )}
-                        </CenteredRow>
 
                         <Form.Item
                             wrapperCol={{

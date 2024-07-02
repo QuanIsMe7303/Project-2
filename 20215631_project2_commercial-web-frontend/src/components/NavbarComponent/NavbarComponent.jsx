@@ -1,16 +1,29 @@
 import { Checkbox, Rate, Row } from 'antd';
+import * as ProductService from '../../services/ProductService';
 
 import classNames from 'classnames/bind';
 import styles from './NavbarComponent.module.scss';
+import { useQuery } from '@tanstack/react-query';
 
 const cx = classNames.bind(styles);
 
 const NavbarComponent = () => {
+    const fetchAllTypeProduct = async () => {
+        const res = await ProductService.getAllTypeProduct();
+        return res;
+    };
+    const typeProduct = useQuery({
+        queryKey: ['type-product'],
+        queryFn: fetchAllTypeProduct,
+    });
+
+    console.log('typeProduct', typeProduct);
+
     const onChange = () => {};
     const renderComponent = (type, options) => {
         switch (type) {
             case 'list':
-                return options.map((option) => {
+                return options?.map((option) => {
                     return <p className={cx('list-item')}>{option}</p>;
                 });
 
@@ -46,9 +59,7 @@ const NavbarComponent = () => {
     return (
         <div className={cx('wrapper')}>
             <h4 className={cx('label')}>Danh mục sản phẩm</h4>
-            <div className={cx('content')}>
-                {renderComponent('list', ['Iphone', 'Ipad', 'Apple Watch'])}
-            </div>
+            <div className={cx('content')}>{renderComponent('list', typeProduct?.data?.data)}</div>
         </div>
     );
 };

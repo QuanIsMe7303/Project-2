@@ -173,16 +173,9 @@ const PaymentPage = () => {
 
     const priceMemo = useMemo(() => {
         const result = order?.selectedOrderItems?.reduce((total, cur) => {
-            return total + cur.price * cur.amount;
+            return total + (cur.price - (cur.price * cur.discount) / 100) * cur.amount;
         }, 0);
         return result;
-    }, [order]);
-
-    const priceDiscountMemo = useMemo(() => {
-        const result = order?.selectedOrderItems?.reduce((total, cur) => {
-            return total + cur.discount * cur.amount;
-        }, 0);
-        return Number(result) ? result : 0;
     }, [order]);
 
     const deliveryMemo = useMemo(() => {
@@ -195,8 +188,8 @@ const PaymentPage = () => {
     }, [priceMemo]);
 
     const totalPriceMemo = useMemo(() => {
-        return priceMemo - priceDiscountMemo + deliveryMemo;
-    }, [priceMemo, priceDiscountMemo, deliveryMemo]);
+        return priceMemo + deliveryMemo;
+    }, [priceMemo, deliveryMemo]);
 
     const handleOnChangeDetail = (e) => {
         setStateUserDetail({
@@ -267,10 +260,6 @@ const PaymentPage = () => {
                         <div className={cx('right-row')}>
                             <p>Tạm tính</p>
                             <span>{priceMemo.toLocaleString('vn-VN') + ' đ'}</span>
-                        </div>
-                        <div className={cx('right-row')}>
-                            <p>Giảm giá</p>
-                            <span>{priceDiscountMemo + '%'}</span>
                         </div>
                         <div className={cx('right-row')}>
                             <p>Phí vận chuyển</p>

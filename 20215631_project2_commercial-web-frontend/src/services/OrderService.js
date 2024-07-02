@@ -50,3 +50,12 @@ export const getAllOrders = async (access_token) => {
     });
     return res.data;
 };
+
+export const deleteManyOrder = async (data, access_token) => {
+    const res = await axiosJWT.post(`${process.env.REACT_APP_API_URL}/order/delete-many`, data, {
+        headers: {
+            token: `Bearer ${access_token}`,
+        },
+    });
+    return res.data;
+};

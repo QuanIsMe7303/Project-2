@@ -5,6 +5,6 @@ export const orderConstant = {
     },
     payment: {
         cod: 'Thanh toán khi nhận hàng',
-        transfer: 'Thanh toán bằng tài khoản ngân hàng',
+        transfer: 'Thanh toán qua PayPal',
     },
 };

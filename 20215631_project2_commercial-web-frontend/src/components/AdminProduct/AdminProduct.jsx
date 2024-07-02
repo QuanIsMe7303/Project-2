@@ -87,9 +87,6 @@ const AdminProduct = () => {
 
     const fetchAllTypeProduct = async () => {
         const res = await ProductService.getAllTypeProduct();
-        // if (res?.status === 'OK') {
-        // setProductTypes(res?.data);
-        // }/
         return res;
     };
 
@@ -260,36 +257,41 @@ const AdminProduct = () => {
         {
             title: 'Tên sản phẩm',
             dataIndex: 'name',
-            // render: (text) => <a>{text}</a>,
             sorter: (a, b) => a.name.length - b.name.length,
             ...getColumnSearchProps('name'),
+            width: '40%',
+
         },
         {
             title: 'Giá',
             dataIndex: 'price',
-            sorter: (a, b) => a.price - b.price,
+            sorter: (a, b) => parseFloat(a.price.replace(/[,.đ]/g, '')) - parseFloat(b.price.replace(/[,.đ]/g, '')),
             filters: [
                 {
-                    text: '< 1000',
+                    text: '< 10.000.000đ',
                     value: 'opt1',
                 },
                 {
-                    text: 'Từ 1000 đến 3000',
+                    text: 'Từ 10.000.000đ đến 30.000.000đ',
                     value: 'opt2',
                 },
                 {
-                    text: '>= 3000',
+                    text: '>= 30.000.000đ',
                     value: 'opt3',
                 },
             ],
             filterMode: 'tree',
             filterSearch: true,
             onFilter: (value, record) => {
-                if (value === 'opt1') return record.price < 1000;
-                else if (value === 'opt2') return record.price >= 1000 && record.price < 3000;
-                else return record.price >= 3000;
+                if (value === 'opt1') return parseFloat(record.price.replace(/[,.đ]/g, '')) < 10000000;
+                else if (value === 'opt2')
+                    return (
+                        parseFloat(record.price.replace(/[,.đ]/g, '')) >= 10000000 &&
+                        parseFloat(record.price.replace(/[,.đ]/g, '')) < 30000000
+                    );
+                else return parseFloat(record.price.replace(/[,.đ]/g, '')) >= 30000000;
             },
-            width: '30%',
+            ellipsis: true
         },
         {
             title: 'Đánh giá',
@@ -321,7 +323,7 @@ const AdminProduct = () => {
                 else if (value === 'opt3') return record.price >= 2 && record.price < 3;
                 else return record.price < 2;
             },
-            width: '30%',
+            ellipsis: true
         },
         {
             title: 'Loại',

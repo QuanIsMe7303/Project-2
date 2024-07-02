@@ -302,10 +302,7 @@ const OrderPage = () => {
                         <p>Tạm tính</p>
                         <span>{priceMemo.toLocaleString('vn-VN') + ' đ'}</span>
                     </div>
-                    {/* <div className={cx('right-row')}>
-                        <p>Giảm giá</p>
-                        <span>{}</span>
-                    </div> */}
+
                     <div className={cx('right-row')}>
                         <p>Phí vận chuyển</p>
                         <span>{deliveryMemo.toLocaleString('vn-VN') + ' đ'}</span>

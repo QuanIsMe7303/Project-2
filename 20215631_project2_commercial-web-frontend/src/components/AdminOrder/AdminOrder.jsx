@@ -278,12 +278,25 @@ const AdminOrder = () => {
         return res;
     });
 
+    const mutationDeleteMany = useMutationHook((data) => {
+        const { access_token, ...ids } = data;
+        const res = OrderService.deleteManyOrder(ids, access_token);
+        return res;
+    });
+
     const {
         data: dataUpdated,
         isPending: isPendingUpdated,
         isSuccess: isSuccessUpdated,
         isError: isErrorUpdated,
     } = mutationUpdate;
+
+    const {
+        data: dataDeletedMany,
+        isPending: isPendingDeletedMany,
+        isSuccess: isSuccessDeletedMany,
+        isError: isErrorDeletedMany,
+    } = mutationDeleteMany;
 
     const handleChange = (id, field, value) => {
         setDataUpdateStatus((prevState) => {
@@ -294,6 +307,17 @@ const AdminOrder = () => {
             mutationUpdate.mutate({ id, access_token: user.access_token, ...updatedStatus });
             return updatedStatus;
         });
+    };
+
+    const handleDeleteManyOrder = (_ids) => {
+        mutationDeleteMany.mutate(
+            { ids: _ids, token: user?.access_token },
+            {
+                onSettled: () => {
+                    queryOrder.refetch();
+                },
+            },
+        );
     };
 
     const getColumnSearchProps = (dataIndex) => ({
@@ -331,6 +355,7 @@ const AdminOrder = () => {
             dataIndex: 'userName',
             sorter: (a, b) => a.userName.length - b.userName.length,
             ...getColumnSearchProps('userName'),
+            width: '14%',
         },
         {
             title: 'SĐT',
@@ -382,6 +407,7 @@ const AdminOrder = () => {
             title: 'Phương thức thanh toán',
             dataIndex: 'paymentMethod',
             ...getColumnSearchProps('paymentMethod'),
+            width: '18%',
         },
     ];
 
@@ -408,11 +434,24 @@ const AdminOrder = () => {
         }
     }, [isSuccessUpdated, isErrorUpdated, dataUpdated?.status]);
 
+    useEffect(() => {
+        if (isSuccessDeletedMany && dataDeletedMany?.status === 'OK') {
+            message.success();
+        } else if (isErrorDeletedMany) {
+            message.error();
+        }
+    }, [isSuccessDeletedMany, isErrorDeletedMany]);
+
     return (
         <div className={cx('wrapper')}>
             <h1 className={cx('title')}>Quản lý người dùng</h1>
             <div>
-                <TableComponent columns={columns} data={tableData} isLoading={isLoadingOrders || isPendingUpdated} />
+                <TableComponent
+                    columns={columns}
+                    data={tableData}
+                    isLoading={isLoadingOrders || isPendingUpdated}
+                    handleDeleteMany={handleDeleteManyOrder}
+                />
             </div>
         </div>
     );

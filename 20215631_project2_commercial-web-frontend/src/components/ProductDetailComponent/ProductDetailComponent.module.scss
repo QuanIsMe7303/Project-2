@@ -63,10 +63,12 @@
 
     p {
         font-size: 1.4rem;
+        text-align: justify;
+        line-height: 1.8rem;
     }
 
-    display: flex;
-    align-items: center;
+    display: grid;
+    grid-template-columns: 30% 70%;
     gap: 10px;
     margin-top: 20px;
 }

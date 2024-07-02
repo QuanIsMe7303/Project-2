@@ -91,7 +91,7 @@ const ProductDetailComponent = ({ id }) => {
                         <Rate allowHalf value={productDetail?.rating} disabled />
                         <span> | Đã bán: {productDetail?.numberSold || 0}</span>
                     </div>
-                    <p className={cx('price')}>{productDetail?.price.toLocaleString('vn-VN') + 'đ'}</p>
+                    <p className={cx('price')}>{productDetail?.price.toLocaleString('vn-VN') + ' đ'}</p>
 
                     <div className={cx('quantity')}>
                         <span className={cx('quantity-label')}>Số lượng: </span>

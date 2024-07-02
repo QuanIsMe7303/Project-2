@@ -119,6 +119,20 @@
             color: #fff;
         }
     }
+
+    .disabled-button {
+        background-color: #9c9c9c;
+        color: #ccc;
+        border: none;
+
+        &:hover {
+            cursor: not-allowed;
+            background-color: #9c9c9c;
+            color: #ccc;
+            border: none;
+            opacity: 1;
+        }
+    }
 }
 
 .order-detail-info {

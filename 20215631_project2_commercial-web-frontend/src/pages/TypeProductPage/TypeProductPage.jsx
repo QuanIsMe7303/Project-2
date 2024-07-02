@@ -36,14 +36,6 @@ const TypeProductPage = () => {
         console.log(res);
     };
 
-    // useEffect(() => {
-    //     let newProduct = [];
-    //     if (searchDebounce) {
-    //         newProduct = products?.filter((pro) => pro?.name === searchDebounce);
-    //         setProducts(newProduct);
-    //     }
-    // }, [searchDebounce])
-
     useEffect(() => {
         if (state) {
             fetchProductType(state, panigate.page, panigate.limit);

@@ -34,13 +34,15 @@ const UserOrders = () => {
         setModalIsOpen(true);
     };
 
+    console.log(data);
+
     const { isSuccess: isSuccessCancel, isError: isErrorCancel, data: dataCancel } = mutation;
 
     const handleCancelOrder = (order) => {
         mutation.mutate(
             { id: order?._id, token: state?.token, orderItems: order?.orderItems },
             {
-                onFinish: () => {
+                onSettled: () => {
                     queryOrders.refetch();
                 },
             },
@@ -67,9 +69,9 @@ const UserOrders = () => {
                 <Loading isLoading={mutation.isPending}>
                     <div className={cx('order-container')}>
                         {data?.data?.map((order) => (
-                            <div key={order._id} className={cx('order-item')}>
+                            <div key={order?._id} className={cx('order-item')}>
                                 <div className={cx('order-product')} onClick={() => handleShowOrderDetail(order._id)}>
-                                    <img alt="" src={order?.orderItems[0]?.image} />
+                                    <img alt="" src={order?.orderItems[0]?.image ? order?.orderItems[0]?.image : ''} />
                                     <div className={cx('order-right')}>
                                         <span className={cx('product-name')}>{order.orderItems[0].name}</span>
                                         <div style={{ display: 'flex', justifyContent: 'space-between' }}>
@@ -112,7 +114,12 @@ const UserOrders = () => {
                                     </p>
                                 </div>
                                 <div className={cx('order-button')}>
-                                    <button onClick={() => handleCancelOrder(order)}>Hủy đơn hàng</button>
+                                    {order.isDelivered && order.isPaid ? (
+                                        <button className={cx('disabled-button')}>Hủy đơn hàng</button>
+                                    ) : (
+                                        <button onClick={() => handleCancelOrder(order)}>Hủy đơn hàng</button>
+                                    )}
+
                                     <button onClick={() => handleShowOrderDetail(order._id)}>Xem chi tiết</button>
                                 </div>
                             </div>
