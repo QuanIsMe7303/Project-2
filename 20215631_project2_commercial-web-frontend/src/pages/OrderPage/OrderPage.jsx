@@ -125,13 +125,11 @@ const OrderPage = () => {
     };
 
     const handleBuying = () => {
-        console.log('user', user);
         if (!order.selectedOrderItems.length) {
             message.error('Vui lòng chọn sản phẩm!');
         } else if (!user.phone || !user.address || !user.name || !user.city) {
             setIsOpenModalUpdateInfo(true);
         } else {
-            console.log('hello');
             navigate('/payment');
         }
     };
@@ -233,56 +231,59 @@ const OrderPage = () => {
                     </div>
 
                     <div className={cx('cart-body')}>
-                        {order?.orderItems.map((item) => (
-                            <div className={cx('cart-item')} key={item.product}>
-                                <Checkbox
-                                    style={{ width: '100%' }}
-                                    onChange={handleOnChangeCheckbox}
-                                    value={item.product}
-                                    checked={listChecked.includes(item.product)}
-                                ></Checkbox>
+                        {order?.orderItems?.length > 0 ? (
+                            order.orderItems.map((item) => (
+                                <div className={cx('cart-item')} key={item.product}>
+                                    <Checkbox
+                                        style={{ width: '100%' }}
+                                        onChange={handleOnChangeCheckbox}
+                                        value={item.product}
+                                        checked={listChecked.includes(item.product)}
+                                    ></Checkbox>
 
-                                <div className={cx('cart-item-image')}>
-                                    <img src={item.image} alt="product-small" />
-                                </div>
-                                <div className={cx('cart-item-name')}>{item.name}</div>
-                                <div className={cx('cart-item-price')}>{item.price.toLocaleString('vn-VN') + ' đ'}</div>
-                                <div className={cx('cart-item-quantity')}>
-                                    <ButtonComponent
-                                        style={{ width: '30px', height: '30px' }}
-                                        icon={<MinusOutlined />}
-                                        size="small"
-                                        onClick={() => handleQuantity('decrease', item.product)}
-                                    />
-                                    <WrapperInputNumber
-                                        readOnly
-                                        min={1}
-                                        max={99}
-                                        value={item?.amount}
-                                        // onChange={handleChangeQuantity}
-                                    />
-                                    <ButtonComponent
-                                        style={{ width: '30px', height: '30px' }}
-                                        icon={<PlusOutlined />}
-                                        size="small"
-                                        onClick={() => handleQuantity('increase', item.product)}
-                                    />
-                                </div>
-                                <div className={cx('cart-item-total')}>{item.discount ? item.discount + '%' : 0}</div>
-                                <div className={cx('cart-item-total')}>
-                                    {((item.price - (item.price * item.discount) / 100) * item.amount).toLocaleString(
-                                        'vn-VN',
-                                    ) + ' đ'}
-                                </div>
+                                    <div className={cx('cart-item-image')}>
+                                        <img src={item.image} alt="product-small" />
+                                    </div>
+                                    <div className={cx('cart-item-name')}>{item.name}</div>
+                                    <div className={cx('cart-item-price')}>
+                                        {item.price.toLocaleString('vn-VN') + ' đ'}
+                                    </div>
+                                    <div className={cx('cart-item-quantity')}>
+                                        <ButtonComponent
+                                            style={{ width: '30px', height: '30px' }}
+                                            icon={<MinusOutlined />}
+                                            size="small"
+                                            onClick={() => handleQuantity('decrease', item.product)}
+                                        />
+                                        <WrapperInputNumber readOnly min={1} max={99} value={item?.amount} />
+                                        <ButtonComponent
+                                            style={{ width: '30px', height: '30px' }}
+                                            icon={<PlusOutlined />}
+                                            size="small"
+                                            onClick={() => handleQuantity('increase', item.product)}
+                                        />
+                                    </div>
+                                    <div className={cx('cart-item-total')}>
+                                        {item.discount ? item.discount + '%' : 0}
+                                    </div>
+                                    <div className={cx('cart-item-total')}>
+                                        {(
+                                            (item.price - (item.price * item.discount) / 100) *
+                                            item.amount
+                                        ).toLocaleString('vn-VN') + ' đ'}
+                                    </div>
 
-                                <div className={cx('cart-item-delete')}>
-                                    <DeleteOutlined
-                                        style={{ color: 'red' }}
-                                        onClick={() => handleRemoveProduct(item.product)}
-                                    />
+                                    <div className={cx('cart-item-delete')}>
+                                        <DeleteOutlined
+                                            style={{ color: 'red' }}
+                                            onClick={() => handleRemoveProduct(item.product)}
+                                        />
+                                    </div>
                                 </div>
-                            </div>
-                        ))}
+                            ))
+                        ) : (
+                            <div className={cx('cart-empty')}>Giỏ hàng trống</div>
+                        )}
                     </div>
                 </div>
 

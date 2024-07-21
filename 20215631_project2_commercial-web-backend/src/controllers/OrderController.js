@@ -109,6 +109,17 @@ const deleteManyOrder = async (req, res) => {
     }
 };
 
+const getRevenue = async (req, res) => {
+    try {
+        const response = await OrderService.getRevenue();
+        return res.status(200).json(response);
+    } catch (e) {
+        console.log(e);
+        return res.status(404).json({
+            message: e,
+        });
+    }
+};
 
 module.exports = {
     createOrder,
@@ -116,5 +127,6 @@ module.exports = {
     cancelOrder,
     getAllOrders,
     updateOrderStatus,
-    deleteManyOrder
+    deleteManyOrder,
+    getRevenue,
 };

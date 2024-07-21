@@ -131,8 +131,6 @@ const PaymentPage = () => {
         }
     };
 
-    console.log(order, user);
-
     const handleCancelUpdate = () => {
         setStateUserDetail({
             name: '',

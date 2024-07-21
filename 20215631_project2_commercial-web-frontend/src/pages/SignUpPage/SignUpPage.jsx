@@ -26,11 +26,11 @@ const SignUpPage = () => {
     const { data, isPending, isSuccess, isError } = mutation;
 
     useEffect(() => {
-        if (isSuccess) {
-            message.success();
+        if (isSuccess && data?.status === 'OK') {
+            message.success('Đăng ký thành công!');
             handleNavigateSignIn();
-        } else if (isError) {
-            message.error();
+        } else if (data?.status === 'ERR') {
+            message.error(data?.message);
         }
     }, [isSuccess, isError]);
 
@@ -58,8 +58,8 @@ const SignUpPage = () => {
     return (
         <div className={cx('wrapper')}>
             <div className={cx('container')}>
-                <h1>Tạo tài khoản mới</h1>
-                <p>Đăng ký tài khoản</p>
+                <h1 className={cx('title')}>Đăng ký</h1>
+                <p className={cx('sub-title')}>Tạo tài khoản mới</p>
                 <div className={cx('form')}>
                     <div className={cx('form-email')}>
                         <p>Địa chỉ email: </p>
@@ -100,7 +100,7 @@ const SignUpPage = () => {
                             {isShowConfirmPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
                         </div>
                     </div>
-                    {data?.status === 'ERR' && <span className={cx('err-sign-up-mes')}>{data?.message}</span>}
+                    {/* {data?.status === 'ERR' && <span className={cx('err-sign-up-mes')}>{data?.message}</span>} */}
                 </div>
 
                 <Loading isLoading={isPending}>

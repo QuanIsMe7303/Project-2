@@ -7,6 +7,9 @@ const images = {
     productSmall2: require('./iphone15-white-small.webp'),
     productSmall3: require('./iphone15-black-small.webp'),
     productSmall4: require('./iphone15-silver-small.webp'),
-}
+    logInBackground: require('./bg-login.jpg'),
+    noProductFound: require('./no-products.png'),
+    pageNotFound: require('./page_not_found.jpg'),
+};
 
-export default images
+export default images;

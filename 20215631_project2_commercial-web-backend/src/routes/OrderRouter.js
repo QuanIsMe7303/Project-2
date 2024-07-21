@@ -9,5 +9,6 @@ router.delete('/:id', OrderController.cancelOrder);
 router.get('/getAll', authMiddleware, OrderController.getAllOrders);
 router.put('/:id', authMiddleware, OrderController.updateOrderStatus);
 router.post('/delete-many', authMiddleware, OrderController.deleteManyOrder);
+router.get('/revenue', authMiddleware, OrderController.getRevenue);
 
 module.exports = router;

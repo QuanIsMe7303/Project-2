@@ -4,10 +4,13 @@ import * as ProductService from '../../services/ProductService';
 import classNames from 'classnames/bind';
 import styles from './NavbarComponent.module.scss';
 import { useQuery } from '@tanstack/react-query';
+import { useNavigate } from 'react-router-dom';
 
 const cx = classNames.bind(styles);
 
 const NavbarComponent = () => {
+    const navigate = useNavigate();
+
     const fetchAllTypeProduct = async () => {
         const res = await ProductService.getAllTypeProduct();
         return res;
@@ -17,14 +20,25 @@ const NavbarComponent = () => {
         queryFn: fetchAllTypeProduct,
     });
 
-    console.log('typeProduct', typeProduct);
+    const handleNavigateType = (type) => {
+        const typeNormalize = type
+            .normalize('NFD')
+            .replace(/[\u0300-\u036f]/g, '')
+            ?.replace(/ /g, '_');
+        navigate(`/products/${typeNormalize}`, { state: type });
+    };
+
 
     const onChange = () => {};
     const renderComponent = (type, options) => {
         switch (type) {
             case 'list':
                 return options?.map((option) => {
-                    return <p className={cx('list-item')}>{option}</p>;
+                    return (
+                        <p className={cx('list-item')} onClick={() => handleNavigateType(option)}>
+                            {option}
+                        </p>
+                    );
                 });
 
             case 'checkbox':

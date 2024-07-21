@@ -34,8 +34,6 @@ const UserOrders = () => {
         setModalIsOpen(true);
     };
 
-    console.log(data);
-
     const { isSuccess: isSuccessCancel, isError: isErrorCancel, data: dataCancel } = mutation;
 
     const handleCancelOrder = (order) => {
@@ -96,6 +94,7 @@ const UserOrders = () => {
                                     </p>
                                 </div>
                                 <div className={cx('order-status')}>
+                                    <p>Ngày đặt hàng: {new Date(order.createdAt).toLocaleDateString()}</p>
                                     <p>
                                         Giao hàng:{' '}
                                         {order.isDelivered === true ? (

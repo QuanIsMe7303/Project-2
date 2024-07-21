@@ -28,7 +28,6 @@ const ProductDetailComponent = ({ id }) => {
 
     const fetchGetDetailProduct = async (context) => {
         const id = context?.queryKey && context?.queryKey[1];
-        console.log(id);
         const res = await ProductService.getDetailProduct(id);
         return res.data;
     };
@@ -70,8 +69,6 @@ const ProductDetailComponent = ({ id }) => {
         }
     };
 
-    console.log('productDetail', productDetail);
-    console.log('user', user);
 
     return (
         <Loading isLoading={isPending}>

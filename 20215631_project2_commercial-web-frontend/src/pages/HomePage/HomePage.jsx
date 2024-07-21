@@ -63,7 +63,7 @@ const HomePage = () => {
         if (res?.status === 'OK') {
             setProductTypes(res?.data);
         }
-    }
+    };
 
     const { isPending, data: products } = useQuery({
         queryKey: ['products', productLimit, searchDebounce],
@@ -73,7 +73,7 @@ const HomePage = () => {
 
     useEffect(() => {
         fetchAllTypeProduct();
-    }, [])
+    }, []);
 
     useEffect(() => {
         if (products?.data?.length > 0) {
@@ -120,12 +120,13 @@ const HomePage = () => {
                             />
                         );
                     })}
+                    {stateProducts.length === 0 && <img className={cx("no-product-found")} alt="" src={images.noProductFound} />}
                 </div>
             </Loading>
 
             <div className={cx('load-more-btn-wrapper')}>
                 <ButtonComponent
-                    disabled={total === stateProducts.length || page === 1}
+                    disabled={total === stateProducts.length || page === 1 || stateProducts.length === 0}
                     className={cx('load-more-products-btn')}
                     styleButton={{
                         display: 'flex',

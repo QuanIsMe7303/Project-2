@@ -6,6 +6,8 @@ const createUser = async (req, res) => {
         const { name, email, password, confirmPassword, phone } = req.body;
         const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
         const isCheckEmail = reg.test(email);
+        const isCheckPassword = password.length >= 6;
+
         if (!email || !password || !confirmPassword) {
             return res.status(200).json({
                 status: 'ERR',
@@ -15,6 +17,11 @@ const createUser = async (req, res) => {
             return res.status(200).json({
                 status: 'ERR',
                 message: 'Email không hợp lệ',
+            });
+        } else if (!isCheckPassword) {
+            return res.status(200).json({
+                status: 'ERR',
+                message: 'Mật khẩu cần ít nhất 6 ký tự',
             });
         } else if (password !== confirmPassword) {
             return res.status(200).json({
@@ -38,19 +45,18 @@ const loginUser = async (req, res) => {
         const reg = /^\w+([-+.']\w+)*@\w+([-.]\w+)*\.\w+([-.]\w+)*$/;
         const isCheckEmail = reg.test(email);
         if (!email || !password) {
-            return res.status(200).json({
+            return res.status(400).json({
                 status: 'ERR',
                 message: 'The input is required',
             });
         } else if (!isCheckEmail) {
             return res.status(200).json({
                 status: 'ERR',
-                message: 'The input is email',
+                message: 'Email không hợp lệ',
             });
         }
         const response = await UserService.loginUser(req.body);
         const { refresh_token, ...newResponse } = response;
-        // console.log("response", response);
         res.cookie('refresh_token', refresh_token, {
             httpOnly: true,
             Secure: false,

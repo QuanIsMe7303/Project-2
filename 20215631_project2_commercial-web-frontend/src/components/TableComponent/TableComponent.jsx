@@ -22,25 +22,37 @@ const TableComponent = (props) => {
     const rowSelection = {
         onChange: (selectedRowKeys, selectedRows) => {
             setRowSelectedKeys(selectedRowKeys);
-            console.log(`selectedRowKeys: ${selectedRowKeys}`);
         },
-        // getCheckboxProps: (record) => ({
-        //     disabled: record.name === 'Disabled User',
-        //     // Column configuration not to be checked
-        //     name: record.name,
-        // }),
     };
 
     const handleDeleteAll = () => {
         handleDeleteMany(rowSelectedKeys);
     };
 
+    // const handleExportExcel = () => {
+    //     const excel = new Excel();
+    //     excel
+    //         .addSheet('test')
+    //         .addColumns(columnsExport)
+    //         .addDataSource(data, {
+    //             str2Percent: true,
+    //         })
+    //         .saveAs('Excel.xlsx');
+    // };
+
     const handleExportExcel = () => {
+        // Chuyển đổi dữ liệu trước khi xuất ra Excel
+        const formattedData = data.map((record) => ({
+            ...record,
+            isDelivered: record.isDelivered ? 'Đã vận chuyển' : 'Chưa vận chuyển',
+            isPaid: record.isPaid ? 'Đã thanh toán' : 'Chưa thanh toán',
+        }));
+
         const excel = new Excel();
         excel
             .addSheet('test')
             .addColumns(columnsExport)
-            .addDataSource(data, {
+            .addDataSource(formattedData, {
                 str2Percent: true,
             })
             .saveAs('Excel.xlsx');
@@ -56,7 +68,7 @@ const TableComponent = (props) => {
                 )}
 
                 <button className={cx('export-excel-btn')} onClick={handleExportExcel}>
-                    <p>Export Excel</p>
+                    <p>Xuất file Excel</p>
                 </button>
 
                 <Table

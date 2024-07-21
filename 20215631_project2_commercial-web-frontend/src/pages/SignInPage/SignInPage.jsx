@@ -11,6 +11,7 @@ import Loading from '../../components/LoadingComponent/Loading';
 import { jwtDecode } from 'jwt-decode';
 import { useDispatch } from 'react-redux';
 import { updateUser } from '../../redux/slices/userSlice';
+import * as message from '../../components/Message/Message';
 
 const cx = classNames.bind(styles);
 
@@ -19,6 +20,8 @@ const SignInPage = () => {
     const location = useLocation();
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
+    const [loginError, setLoginError] = useState(null);
+
     const dispatch = useDispatch();
 
     const navigate = useNavigate();
@@ -28,7 +31,7 @@ const SignInPage = () => {
     const { data, isPending, isSuccess } = mutation;
 
     useEffect(() => {
-        if (isSuccess) {
+        if (isSuccess && data?.status === 'OK') {
             if (location?.state) {
                 navigate(location.state);
             } else {
@@ -42,8 +45,11 @@ const SignInPage = () => {
                     handleGetDetailUser(decoded?.id, data?.access_token);
                 }
             }
+        } else if (data?.status === 'ERR') {
+            message.error(data?.message);
+            setLoginError(data?.message);
         }
-    }, [isSuccess]);
+    }, [isSuccess, data]);
 
     const handleGetDetailUser = async (id, token) => {
         const res = await UserService.getDetailUser(id, token);
@@ -63,18 +69,18 @@ const SignInPage = () => {
     };
 
     const handleSignIn = () => {
+        setLoginError(null);
         mutation.mutate({
             email,
             password,
         });
-        console.log(email, password);
     };
 
     return (
         <div className={cx('wrapper')}>
             <div className={cx('container')}>
-                <h1>Xin chào</h1>
-                <p>Đăng nhập vào hệ thống</p>
+                <h1 className={cx('title')}>Đăng nhập</h1>
+                <p className={cx('sub-title')}>Đăng nhập vào hệ thống</p>
                 <form className={cx('form')}>
                     <div className={cx('form-email')}>
                         <p>Địa chỉ email: </p>
@@ -99,7 +105,7 @@ const SignInPage = () => {
                             {isShowPassword ? <EyeFilled /> : <EyeInvisibleFilled />}
                         </div>
                     </div>
-                    {data?.status === 'ERR' && <span className={cx('err-sign-in-mes')}>{data?.message}</span>}
+                    {loginError && <span className={cx('err-sign-in-mes')}>{loginError}</span>}
                 </form>
                 <Loading isLoading={isPending}>
                     <ButtonComponent
@@ -126,7 +132,7 @@ const SignInPage = () => {
                     <div className={cx('make-account')}>
                         <p>Chưa có tài khoản?</p>
                         <span className={cx('move-to-signup')} onClick={handleNavigateSignUp}>
-                            Tạo tài khoản
+                            Đăng ký
                         </span>
                     </div>
                 </div>
@@ -134,5 +140,4 @@ const SignInPage = () => {
         </div>
     );
 };
-
 export default SignInPage;

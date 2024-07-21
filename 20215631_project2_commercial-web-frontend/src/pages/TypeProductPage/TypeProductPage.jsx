@@ -1,6 +1,7 @@
 import NavbarComponent from '../../components/NavbarComponent/NavbarComponent';
 import classNames from 'classnames/bind';
 import styles from './TypeProductPage.module.scss';
+import images from '../../assets/images';
 import CardComponent from '../../components/CartComponent/CartComponent';
 import { Pagination } from 'antd';
 import { useLocation } from 'react-router-dom';
@@ -33,7 +34,6 @@ const TypeProductPage = () => {
         } else {
             setLoading(false);
         }
-        console.log(res);
     };
 
     useEffect(() => {
@@ -43,7 +43,6 @@ const TypeProductPage = () => {
     }, [state, panigate.page, panigate.limit]);
 
     const onChangePagination = (current, pageSize) => {
-        console.log(current, pageSize);
         setPanigate({
             ...panigate,
             page: current - 1,
@@ -66,7 +65,6 @@ const TypeProductPage = () => {
                                 } else {
                                     return null;
                                 }
-                                
                             })
                             .map((product) => {
                                 return (
@@ -85,6 +83,7 @@ const TypeProductPage = () => {
                                     />
                                 );
                             })}
+                        {products.length === 0 && <img alt="" src={images.noProductFound} />}
                     </div>
                     <div className={cx('pagination')}>
                         <Pagination

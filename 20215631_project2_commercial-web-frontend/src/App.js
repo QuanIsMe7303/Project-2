@@ -11,17 +11,6 @@ import { updateUser } from './redux/slices/userSlice';
 import Loading from './components/LoadingComponent/Loading';
 
 function App() {
-    // useEffect(() => {
-    //     fetchApi();
-    // }, []);
-
-    // const fetchApi = async () => {
-    //     const res = await axios.get(`${process.env.REACT_APP_API_URL}/product/get-all`);
-    //     return res.data;
-    // };
-
-    // const query = useQuery({ queryKey: [], queryFn: fetchApi });
-
     const dispatch = useDispatch();
     const [isLoading, setIsLoading] = useState(false);
     const user = useSelector((state) => state.user);
